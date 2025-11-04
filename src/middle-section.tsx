@@ -1,0 +1,141 @@
+import {
+  Center,
+  Heading,
+  IconButton,
+  Input,
+  Span,
+  VStack,
+} from '@chakra-ui/react';
+import {
+  FileUploadList,
+  FileUploadRoot,
+  FileUploadTrigger,
+} from './components/ui/file-button';
+import { InputGroup } from './components/ui/input-group';
+import {
+  EnterIcon,
+  UploadIcon,
+} from './icons/other-icons';
+import { useState } from 'react';
+import { Button } from './components/ui/button';
+
+export function MiddleSection() {
+  const [inputValue, setInputValue] = useState('');
+
+  const handleInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+  return (
+    <Center flex='1'>
+      <VStack gap='6'>
+        <Heading size='3xl'>What can I help with?</Heading>
+        <Center>
+          <InputGroup
+            minW='768px'
+            startElement={
+              <FileUploadRoot>
+                <FileUploadTrigger asChild>
+                  <UploadIcon fontSize='2xl' color='fg' />
+                </FileUploadTrigger>
+                <FileUploadList />
+              </FileUploadRoot>
+            }
+            endElement={
+              <IconButton
+                fontSize='2xl'
+                size='sm'
+                borderRadius='full'
+                disabled={inputValue.trim() === ''}
+              >
+                <EnterIcon fontSize='2xl' />
+              </IconButton>
+            }
+          >
+            <Input
+              placeholder='Message ChatGPT'
+              variant='subtle'
+              size='lg'
+              borderRadius='3xl'
+              value={inputValue}
+              onChange={handleInputValue}
+            />
+          </InputGroup>
+        </Center>
+
+        <VStack gap='4' align='stretch' maxW='768px'>
+          <Heading size='lg' textAlign='center' color='fg.muted'>
+            Frequently Asked Questions
+          </Heading>
+          <VStack gap='0' align='stretch'>
+            <Button 
+              variant='ghost' 
+              p='4' 
+              h='auto'
+              justifyContent='flex-start'
+              borderBottomWidth='1px'
+              borderBottomColor='rgba(255, 255, 255, 0.1)'
+              borderRadius='0'
+              _hover={{ 
+                bg: 'rgba(255, 255, 255, 0.05)',
+                transform: 'translateX(4px)',
+                borderBottomColor: 'rgba(255, 255, 255, 0.2)'
+              }}
+              _active={{
+                bg: 'rgba(255, 255, 255, 0.1)'
+              }}
+              transition='all 0.2s ease-in-out'
+              onClick={() => setInputValue('What is artificial intelligence and how does it work?')}
+            >
+              <Span fontSize='sm' textAlign='left' color='fg.subtle' w='full'>
+                What is artificial intelligence and how does it work?
+              </Span>
+            </Button>
+            <Button 
+              variant='ghost' 
+              p='4' 
+              h='auto'
+              justifyContent='flex-start'
+              borderBottomWidth='1px'
+              borderBottomColor='rgba(255, 255, 255, 0.1)'
+              borderRadius='0'
+              _hover={{ 
+                bg: 'rgba(255, 255, 255, 0.05)',
+                transform: 'translateX(4px)',
+                borderBottomColor: 'rgba(255, 255, 255, 0.2)'
+              }}
+              _active={{
+                bg: 'rgba(255, 255, 255, 0.1)'
+              }}
+              transition='all 0.2s ease-in-out'
+              onClick={() => setInputValue('How can I improve my productivity at work?')}
+            >
+              <Span fontSize='sm' textAlign='left' color='fg.subtle' w='full'>
+                How can I improve my productivity at work?
+              </Span>
+            </Button>
+            <Button 
+              variant='ghost' 
+              p='4' 
+              h='auto'
+              justifyContent='flex-start'
+              borderRadius='0'
+              _hover={{ 
+                bg: 'rgba(255, 255, 255, 0.05)',
+                transform: 'translateX(4px)'
+              }}
+              _active={{
+                bg: 'rgba(255, 255, 255, 0.1)'
+              }}
+              transition='all 0.2s ease-in-out'
+              onClick={() => setInputValue('What are the best practices for learning a new programming language?')}
+            >
+              <Span fontSize='sm' textAlign='left' color='fg.subtle' w='full'>
+                What are the best practices for learning a new programming language?
+              </Span>
+            </Button>
+          </VStack>
+        </VStack>
+      </VStack>
+    </Center>
+  );
+}
