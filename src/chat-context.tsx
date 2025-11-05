@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { demoResponseService } from './services/demo-response-service';
 
 export interface Message {
   id: string;
@@ -22,6 +23,11 @@ const ChatContext = createContext({} as ChatContextType);
 export const ChatProvider = (props: { children: React.ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Load demo responses khi component mount
+  useEffect(() => {
+    demoResponseService.loadResponses();
+  }, []);
 
   const addMessage = (content: string, role: 'user' | 'assistant') => {
     const newMessage: Message = {

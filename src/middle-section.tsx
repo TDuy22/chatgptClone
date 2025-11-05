@@ -19,6 +19,7 @@ import {
 import { useState } from 'react';
 import { Button } from './components/ui/button';
 import { useChatContext } from './chat-context';
+import { demoResponseService } from './services/demo-response-service';
 
 export function MiddleSection() {
   const [inputValue, setInputValue] = useState('');
@@ -37,15 +38,10 @@ export function MiddleSection() {
     setInputValue('');
     setIsLoading(true);
 
-    // Simulate AI response with streaming effect
+    // Get response from demo JSON file
     setTimeout(() => {
-      const mockResponses = [
-        'Chào bạn! Mình đây. Hôm nay bạn muốn mình hỗ trợ gì—viết kịch bản vlog, chữa bài Hóa, hay debug code/React?',
-        'Đây là câu trả lời mẫu từ ChatGPT với hiệu ứng streaming text. Bạn có thể thay thế bằng API thực tế để tạo trải nghiệm tương tác tốt hơn.',
-        'Tôi đã hiểu câu hỏi của bạn. Đây là câu trả lời chi tiết với hiệu ứng gõ chữ từng ký tự một, giống như ChatGPT thực sự đang suy nghĩ và trả lời.',
-      ];
-      const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
-      addMessage(randomResponse, 'assistant');
+      const response = demoResponseService.getNextResponse();
+      addMessage(response, 'assistant');
       setIsLoading(false);
     }, 500);
   };
