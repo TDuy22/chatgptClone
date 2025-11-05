@@ -70,6 +70,23 @@ class DemoResponseService {
     return response.content.answer;
   }
 
+  // Method mới: Trả về full response với sources
+  getNextResponseWithSources(): { answer: string; sources?: Source[] } {
+    if (!this.isLoaded || this.responses.length === 0) {
+      return { answer: 'Đang tải dữ liệu...', sources: [] };
+    }
+
+    const response = this.responses[this.currentIndex];
+    
+    // Di chuyển đến response tiếp theo (loop lại nếu hết)
+    this.currentIndex = (this.currentIndex + 1) % this.responses.length;
+    
+    console.log(`📝 Response ${this.currentIndex}/${this.responses.length}:`, response.content.answer.substring(0, 50) + '...');
+    console.log(`📚 Sources:`, response.content.sources?.length || 0);
+    
+    return response.content;
+  }
+
   getCurrentResponseWithSources(): DemoResponse | null {
     if (!this.isLoaded || this.responses.length === 0) {
       return null;

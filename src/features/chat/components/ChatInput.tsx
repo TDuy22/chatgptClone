@@ -35,10 +35,10 @@ export function ChatInput() {
     setInputValue('');
     setIsLoading(true);
 
-    // Get response from demo JSON file
+    // Get response from demo JSON file with sources
     setTimeout(() => {
-      const response = demoResponseService.getNextResponse();
-      addMessage(response, 'assistant');
+      const responseWithSources = demoResponseService.getNextResponseWithSources();
+      addMessage(responseWithSources, 'assistant');
       setIsLoading(false);
     }, 500);
   };

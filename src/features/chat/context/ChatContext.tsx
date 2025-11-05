@@ -1,23 +1,26 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { demoResponseService } from '@/services/demo-response-service';
 import { useAppContext } from '@/contexts/AppContext';
+import type { SourceItem } from '@/utils/citation';
 
 export interface Message {
   id: string;
   role: 'user' | 'assistant';
-  content: string;
+  content: string | { answer?: string; text?: string; sources?: SourceItem[] };
   timestamp: Date;
   isStreaming?: boolean;
 }
 
 interface ChatContextType {
   messages: Message[];
-  addMessage: (content: string, role: 'user' | 'assistant') => void;
+  addMessage: (content: string | { answer?: string; text?: string; sources?: SourceItem[] }, role: 'user' | 'assistant') => void;
   updateLastMessage: (content: string) => void;
   setMessageStreaming: (id: string, isStreaming: boolean) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
   clearMessages: () => void;
+  selectedSource: SourceItem | null;
+  setSelectedSource: (source: SourceItem | null) => void;
 }
 
 const ChatContext = createContext({} as ChatContextType);
@@ -26,6 +29,7 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [lastLoadedChatId, setLastLoadedChatId] = useState<string | null>(null);
+  const [selectedSource, setSelectedSource] = useState<SourceItem | null>(null);
   const creatingChatRef = useRef<string | null>(null); // Track chat being created
   const { currentChatId, getCurrentChatHistory, updateChatHistory, addChatHistory } = useAppContext();
 
@@ -79,10 +83,14 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
         if (title === 'New Chat') {
           const firstUserMessage = messages.find(m => m.role === 'user');
           if (firstUserMessage) {
+            // Get content as string
+            const contentText = typeof firstUserMessage.content === 'string' 
+              ? firstUserMessage.content 
+              : (firstUserMessage.content.text || firstUserMessage.content.answer || '');
             // Truncate title to max 40 characters
-            title = firstUserMessage.content.length > 40 
-              ? firstUserMessage.content.substring(0, 40) + '...'
-              : firstUserMessage.content;
+            title = contentText.length > 40 
+              ? contentText.substring(0, 40) + '...'
+              : contentText;
           }
         }
 
@@ -94,7 +102,7 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     }
   }, [messages, currentChatId, lastLoadedChatId, getCurrentChatHistory, updateChatHistory]);
 
-  const addMessage = (content: string, role: 'user' | 'assistant') => {
+  const addMessage = (content: string | { answer?: string; text?: string; sources?: SourceItem[] }, role: 'user' | 'assistant') => {
     const newMessage: Message = {
       id: Date.now().toString(),
       role,
@@ -145,6 +153,8 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
         isLoading, 
         setIsLoading,
         clearMessages,
+        selectedSource,
+        setSelectedSource,
       }}
     >
       {props.children}

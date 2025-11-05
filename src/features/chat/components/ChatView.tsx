@@ -5,9 +5,10 @@ import { ChatInput } from './ChatInput';
 import { TopSection } from './sections/TopSection';
 import { MiddleSection } from './sections/MiddleSection';
 import { BottomSection } from './sections/BottomSection';
+import { PDFViewer } from '@/components/common/PDFViewer';
 
 function ChatViewContent() {
-  const { messages } = useChatContext();
+  const { messages, selectedSource, setSelectedSource } = useChatContext();
   const hasMessages = messages.length > 0;
 
   if (!hasMessages) {
@@ -25,16 +26,26 @@ function ChatViewContent() {
 
   // After first message: show messages and input at bottom
   return (
-    <Box flex='1'>
-      <Flex direction='column' h='100vh'>
-        <TopSection />
-        <Box flex='1' overflowY='auto'>
-          <ChatMessages />
-        </Box>
-        <ChatInput />
-        <BottomSection />
-      </Flex>
-    </Box>
+    <>
+      <Box flex='1'>
+        <Flex direction='column' h='100vh'>
+          <TopSection />
+          <Box flex='1' overflowY='auto'>
+            <ChatMessages />
+          </Box>
+          <ChatInput />
+          <BottomSection />
+        </Flex>
+      </Box>
+      
+      {/* PDF Viewer Panel */}
+      {selectedSource && (
+        <PDFViewer 
+          source={selectedSource} 
+          onClose={() => setSelectedSource(null)} 
+        />
+      )}
+    </>
   );
 }
 

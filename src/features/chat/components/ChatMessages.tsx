@@ -1,13 +1,13 @@
 import { Box, Flex, HStack, IconButton, VStack } from '@chakra-ui/react';
 import { useChatContext } from '../context/ChatContext';
-import { LuThumbsUp, LuThumbsDown, LuCopy, LuRefreshCw, LuShare } from 'react-icons/lu';
+import { LuThumbsUp, LuThumbsDown, LuCopy } from 'react-icons/lu';
 import { Tooltip } from '@/components/ui/tooltip';
 import { StreamingText } from '@/components/common/StreamingText';
 import { useEffect, useRef } from 'react';
-import ReactMarkdown from 'react-markdown';
+import { TextWithCitations, type SourceItem } from '@/utils/citation';
 
 export function ChatMessages() {
-  const { messages, setMessageStreaming } = useChatContext();
+  const { messages, setMessageStreaming, setSelectedSource } = useChatContext();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -31,20 +31,37 @@ export function ChatMessages() {
 
   return (
     <VStack gap='0' align='stretch' flex='1' overflowY='auto'>
-      {messages.map((message) => (
-        <Box 
-          key={message.id} 
-          py='8'
-          px='4'
-          bg={message.role === 'assistant' ? 'rgba(255, 255, 255, 0.02)' : 'transparent'}
-          borderBottomWidth='1px'
-          borderBottomColor='rgba(255, 255, 255, 0.05)'
-        >
-          <Flex 
-            maxW='768px' 
-            mx='auto'
-            justifyContent={message.role === 'user' ? 'flex-end' : 'flex-start'}
+      {messages.map((message) => {
+        // Extract content parts
+        const content = message.content;
+        const sources: SourceItem[] = typeof content === 'object' ? (content.sources || []) : [];
+        const textContent = typeof content === 'string' 
+          ? content 
+          : (content.answer || content.text || '');
+
+        // Debug log
+        console.log('💬 Message:', {
+          role: message.role,
+          contentType: typeof content,
+          textContentLength: textContent.length,
+          sourcesCount: sources.length,
+          textPreview: textContent.substring(0, 100)
+        });
+
+        return (
+          <Box 
+            key={message.id} 
+            py='8'
+            px='4'
+            bg={message.role === 'assistant' ? 'rgba(255, 255, 255, 0.02)' : 'transparent'}
+            borderBottomWidth='1px'
+            borderBottomColor='rgba(255, 255, 255, 0.05)'
           >
+            <Flex 
+              maxW='768px' 
+              mx='auto'
+              justifyContent={message.role === 'user' ? 'flex-end' : 'flex-start'}
+            >
             {message.role === 'user' ? (
               // User message: right-aligned with gray box
               <Box
@@ -68,7 +85,11 @@ export function ChatMessages() {
                 }}
               >
                 <Box fontSize='md' color='fg' lineHeight='1.7'>
-                  <ReactMarkdown>{message.content}</ReactMarkdown>
+                  <TextWithCitations 
+                    text={textContent} 
+                    sources={sources} 
+                    onClick={setSelectedSource} 
+                  />
                 </Box>
               </Box>
             ) : (
@@ -76,8 +97,10 @@ export function ChatMessages() {
               <VStack align='start' flex='1' gap='3'>
                 {message.isStreaming ? (
                   <StreamingText 
-                    content={message.content}
+                    content={textContent}
+                    sources={sources}
                     onStreamComplete={() => setMessageStreaming(message.id, false)}
+                    onCitationClick={setSelectedSource}
                   />
                 ) : (
                   <Box 
@@ -121,7 +144,11 @@ export function ChatMessages() {
                       }
                     }}
                   >
-                    <ReactMarkdown>{message.content}</ReactMarkdown>
+                    <TextWithCitations 
+                      text={textContent} 
+                      sources={sources} 
+                      onClick={setSelectedSource} 
+                    />
                   </Box>
                 )}
                 
@@ -160,7 +187,8 @@ export function ChatMessages() {
             )}
           </Flex>
         </Box>
-      ))}
+        );
+      })}
       <div ref={messagesEndRef} />
     </VStack>
   );

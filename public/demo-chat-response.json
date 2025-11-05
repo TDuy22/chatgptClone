@@ -10,14 +10,14 @@
           "id": "1",
           "fileName": "project_specs.pdf",
           "pageNumber": 4,
-          "fileUrl": "/api/documents/project_specs.pdf",
+          "fileUrl": "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf",
           "snippet": "Để đảm bảo tính chính xác, mỗi câu trả lời phải được liên kết với metadata... bao gồm tên file và số trang cụ thể."
         },
         {
           "id": "2",
-          "fileName": "ux_design_requirements.docx",
+          "fileName": "ux_design_requirements.pdf",
           "pageNumber": 2,
-          "fileUrl": "/api/documents/ux_design_requirements.docx",
+          "fileUrl": "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf",
           "snippet": "Tính năng 'Click-to-Source': Cho phép người dùng bấm vào trích dẫn [id] để mở file nguồn tại đúng trang [page]."
         }
       ]
@@ -42,7 +42,7 @@
           "id": "3",
           "fileName": "frontend_dev_guide.pdf",
           "pageNumber": 8,
-          "fileUrl": "/api/documents/frontend_dev_guide.pdf",
+          "fileUrl": "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf",
           "snippet": "Regex có thể được sử dụng để trích xuất các ID trích dẫn (ví dụ: /\\[(\\d+)\\]/g) từ chuỗi văn bản trả về."
         }
       ]
@@ -59,7 +59,7 @@
           "id": "4",
           "fileName": "error_handling.txt",
           "pageNumber": 1,
-          "fileUrl": "/api/documents/error_handling.txt",
+          "fileUrl": "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf",
           "snippet": "Nếu một ID trích dẫn trong 'answer' không có mục 'source' tương ứng, hãy vô hiệu hóa liên kết đó."
         }
       ]

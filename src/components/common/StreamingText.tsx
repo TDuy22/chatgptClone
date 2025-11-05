@@ -1,14 +1,16 @@
 import { Box, Text } from '@chakra-ui/react';
 import { useStreamingText } from '@/hooks/useStreamingText';
 import { useEffect, useRef } from 'react';
-import ReactMarkdown from 'react-markdown';
+import { TextWithCitations, type SourceItem } from '@/utils/citation';
 
 interface StreamingTextProps {
   content: string;
+  sources?: SourceItem[];
   onStreamComplete?: () => void;
+  onCitationClick?: (source: SourceItem) => void;
 }
 
-export function StreamingText({ content, onStreamComplete }: StreamingTextProps) {
+export function StreamingText({ content, sources = [], onStreamComplete, onCitationClick }: StreamingTextProps) {
   const { displayedText, isStreaming } = useStreamingText(content, 20);
   const hasCalledCompleteRef = useRef(false);
 
@@ -67,7 +69,11 @@ export function StreamingText({ content, onStreamComplete }: StreamingTextProps)
         }
       }}
     >
-      <ReactMarkdown>{displayedText || (isStreaming ? '' : content)}</ReactMarkdown>
+      <TextWithCitations 
+        text={displayedText || (isStreaming ? '' : content)}
+        sources={sources}
+        onClick={onCitationClick || (() => {})}
+      />
       {isStreaming && (
         <Text as='span' animation='blink 1s infinite' ml='1'>
           ▊
