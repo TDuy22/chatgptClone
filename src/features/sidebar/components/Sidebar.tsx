@@ -19,10 +19,16 @@ import {
 } from '../icons/sidebar-icons';
 
 import { useSidebarContext } from '../context/SidebarContext';
+import { ChatHistoryList } from './ChatHistoryList';
 
 export function Sidebar() {
   const { sideBarVisible, toggleSidebar } = useSidebarContext();
-  const { currentView, setCurrentView } = useAppContext();
+  const { currentView, setCurrentView, addChatHistory } = useAppContext();
+
+  const handleNewChat = () => {
+    addChatHistory();
+    setCurrentView('chat');
+  };
 
   return (
     <Box
@@ -44,13 +50,13 @@ export function Sidebar() {
           </Tooltip>
 
           <Tooltip content='New chat' showArrow>
-            <IconButton variant='ghost'>
+            <IconButton variant='ghost' onClick={handleNewChat}>
               <NewChatIcon fontSize='2xl' color='fg.muted' />
             </IconButton>
           </Tooltip>
         </Flex>
 
-        <Stack px='2' gap='0' flex='1'>
+        <Stack px='2' gap='0' flex='1' overflowY='auto'>
           <HStack
             position='relative'
             className='group'
@@ -90,12 +96,14 @@ export function Sidebar() {
                   fontSize='md'
                   color='fg.subtle'
                   _hover={{ color: 'fg.muted' }}
+                  onClick={handleNewChat}
+                  cursor='pointer'
                 />
               </Tooltip>
             </AbsoluteCenter>
           </HStack>
 
-
+          <ChatHistoryList />
         </Stack>
 
         <Box
