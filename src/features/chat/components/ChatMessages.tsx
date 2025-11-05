@@ -100,24 +100,6 @@ export function ChatMessages() {
                         <LuThumbsDown />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip content='Regenerate'>
-                      <IconButton
-                        variant='ghost'
-                        size='xs'
-                        aria-label='Regenerate'
-                      >
-                        <LuRefreshCw />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip content='Share'>
-                      <IconButton
-                        variant='ghost'
-                        size='xs'
-                        aria-label='Share'
-                      >
-                        <LuShare />
-                      </IconButton>
-                    </Tooltip>
                   </HStack>
                 )}
               </VStack>

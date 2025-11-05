@@ -48,10 +48,10 @@ export const ChatGPTMenu = () => {
         <Button
           variant='ghost'
           fontSize='lg'
-          fontWeight='bold'
+          fontWeight='blightbold'
           color='fg.muted'
         >
-          Chat GPT <MenuIcon />
+          Askify <MenuIcon />
         </Button>
       </MenuTrigger>
       <MenuContent minW='320px' borderRadius='2xl'>

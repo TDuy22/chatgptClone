@@ -81,7 +81,7 @@ export function MiddleSection() {
             }
           >
             <Input
-              placeholder='Message ChatGPT'
+              placeholder='Message Askify'
               variant='subtle'
               size='lg'
               borderRadius='3xl'

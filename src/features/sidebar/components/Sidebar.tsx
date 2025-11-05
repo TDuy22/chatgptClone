@@ -72,7 +72,7 @@ export function Sidebar() {
                 <SmallGPTIcon fontSize='md' />
               </Circle>
               <Text fontSize='sm' fontWeight='md'>
-                ChatGPT
+                Askify
               </Text>
             </Link>
             <AbsoluteCenter
