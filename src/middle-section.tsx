@@ -18,12 +18,43 @@ import {
 } from './icons/other-icons';
 import { useState } from 'react';
 import { Button } from './components/ui/button';
+import { useChatContext } from './chat-context';
 
 export function MiddleSection() {
   const [inputValue, setInputValue] = useState('');
+  const { addMessage, setIsLoading } = useChatContext();
 
   const handleInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
+  };
+
+  const handleSendMessage = async () => {
+    const message = inputValue.trim();
+    if (message === '') return;
+
+    // Add user message
+    addMessage(message, 'user');
+    setInputValue('');
+    setIsLoading(true);
+
+    // Simulate AI response (replace with actual API call)
+    setTimeout(() => {
+      const mockResponses = [
+        'Chào bạn! Mình đây. Hôm nay bạn muốn mình hỗ trợ gì—viết kịch bản vlog, chữa bài Hóa, hay debug code/React?',
+        'Đây là câu trả lời mẫu từ ChatGPT. Bạn có thể thay thế bằng API thực tế.',
+        'Tôi đã hiểu câu hỏi của bạn. Đây là câu trả lời chi tiết...',
+      ];
+      const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+      addMessage(randomResponse, 'assistant');
+      setIsLoading(false);
+    }, 1000);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
   return (
     <Center flex='1'>
@@ -46,6 +77,8 @@ export function MiddleSection() {
                 size='sm'
                 borderRadius='full'
                 disabled={inputValue.trim() === ''}
+                onClick={handleSendMessage}
+                aria-label='Send message'
               >
                 <EnterIcon fontSize='2xl' />
               </IconButton>
@@ -58,13 +91,14 @@ export function MiddleSection() {
               borderRadius='3xl'
               value={inputValue}
               onChange={handleInputValue}
+              onKeyDown={handleKeyDown}
             />
           </InputGroup>
         </Center>
 
         <VStack gap='4' align='stretch' maxW='768px'>
           <Heading size='lg' textAlign='center' color='fg.muted'>
-            Frequently Asked Questions
+            
           </Heading>
           <VStack gap='0' align='stretch'>
             <Button 
@@ -84,7 +118,9 @@ export function MiddleSection() {
                 bg: 'rgba(255, 255, 255, 0.1)'
               }}
               transition='all 0.2s ease-in-out'
-              onClick={() => setInputValue('What is artificial intelligence and how does it work?')}
+              onClick={() => {
+                setInputValue('What is artificial intelligence and how does it work?');
+              }}
             >
               <Span fontSize='sm' textAlign='left' color='fg.subtle' w='full'>
                 What is artificial intelligence and how does it work?
@@ -107,7 +143,9 @@ export function MiddleSection() {
                 bg: 'rgba(255, 255, 255, 0.1)'
               }}
               transition='all 0.2s ease-in-out'
-              onClick={() => setInputValue('How can I improve my productivity at work?')}
+              onClick={() => {
+                setInputValue('How can I improve my productivity at work?');
+              }}
             >
               <Span fontSize='sm' textAlign='left' color='fg.subtle' w='full'>
                 How can I improve my productivity at work?
@@ -127,7 +165,9 @@ export function MiddleSection() {
                 bg: 'rgba(255, 255, 255, 0.1)'
               }}
               transition='all 0.2s ease-in-out'
-              onClick={() => setInputValue('What are the best practices for learning a new programming language?')}
+              onClick={() => {
+                setInputValue('What are the best practices for learning a new programming language?');
+              }}
             >
               <Span fontSize='sm' textAlign='left' color='fg.subtle' w='full'>
                 What are the best practices for learning a new programming language?

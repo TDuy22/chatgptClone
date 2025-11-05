@@ -1,0 +1,24 @@
+{
+  "messageId": "msg_1a2b3c",
+  "sender": "bot",
+  "timestamp": "2025-11-04T12:30:00Z",
+  "content": {
+    "answer": "Mỗi đoạn trong câu trả lời có thể sẽ có hoặc không có metadata [1]. Metadata này chính là file PDF mà mô hình dùng để trả lời, và bạn cần trích dẫn (cite) cả trang của tài liệu đó [1]. Khi người dùng bấm vào trích dẫn, hệ thống sẽ hiển thị file và mở đúng trang đã được ghi [2].",
+    "sources": [
+      {
+        "id": "1",
+        "fileName": "project_specs.pdf",
+        "pageNumber": 4,
+        "fileUrl": "/api/documents/project_specs.pdf",
+        "snippet": "Để đảm bảo tính chính xác, mỗi câu trả lời phải được liên kết với metadata... bao gồm tên file và số trang cụ thể."
+      },
+      {
+        "id": "2",
+        "fileName": "ux_design_requirements.docx",
+        "pageNumber": 2,
+        "fileUrl": "/api/documents/ux_design_requirements.docx",
+        "snippet": "Tính năng 'Click-to-Source': Cho phép người dùng bấm vào trích dẫn [id] để mở file nguồn tại đúng trang [page]."
+      }
+    ]
+  }
+}
