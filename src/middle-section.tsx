@@ -37,17 +37,17 @@ export function MiddleSection() {
     setInputValue('');
     setIsLoading(true);
 
-    // Simulate AI response (replace with actual API call)
+    // Simulate AI response with streaming effect
     setTimeout(() => {
       const mockResponses = [
         'Chào bạn! Mình đây. Hôm nay bạn muốn mình hỗ trợ gì—viết kịch bản vlog, chữa bài Hóa, hay debug code/React?',
-        'Đây là câu trả lời mẫu từ ChatGPT. Bạn có thể thay thế bằng API thực tế.',
-        'Tôi đã hiểu câu hỏi của bạn. Đây là câu trả lời chi tiết...',
+        'Đây là câu trả lời mẫu từ ChatGPT với hiệu ứng streaming text. Bạn có thể thay thế bằng API thực tế để tạo trải nghiệm tương tác tốt hơn.',
+        'Tôi đã hiểu câu hỏi của bạn. Đây là câu trả lời chi tiết với hiệu ứng gõ chữ từng ký tự một, giống như ChatGPT thực sự đang suy nghĩ và trả lời.',
       ];
       const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
       addMessage(randomResponse, 'assistant');
       setIsLoading(false);
-    }, 1000);
+    }, 500);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
