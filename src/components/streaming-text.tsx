@@ -8,7 +8,7 @@ interface StreamingTextProps {
 }
 
 export function StreamingText({ content, onStreamComplete }: StreamingTextProps) {
-  const { displayedText, isStreaming } = useStreamingText(content, 10);
+  const { displayedText, isStreaming } = useStreamingText(content, 20);
   const hasCalledCompleteRef = useRef(false);
 
   console.log('StreamingText render:', { 
