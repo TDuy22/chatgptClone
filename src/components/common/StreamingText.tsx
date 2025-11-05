@@ -1,5 +1,5 @@
 import { Text } from '@chakra-ui/react';
-import { useStreamingText } from '../hooks/useStreamingText';
+import { useStreamingText } from '@/hooks/useStreamingText';
 import { useEffect, useRef } from 'react';
 
 interface StreamingTextProps {

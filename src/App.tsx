@@ -1,9 +1,8 @@
 import { Flex } from '@chakra-ui/react';
-import { AppProvider, useAppContext } from './app-context';
-import { ChatView } from './chat-view';
-import { DataManagement } from './data-management';
-import { Sidebar } from './sidebar';
-import { SidebarProvider } from './sidebar-context';
+import { AppProvider, useAppContext } from '@/contexts/AppContext';
+import { ChatView } from '@/features/chat';
+import { DataManagement } from '@/features/data-management';
+import { Sidebar, SidebarProvider } from '@/features/sidebar';
 
 function AppContent() {
   const { currentView } = useAppContext();

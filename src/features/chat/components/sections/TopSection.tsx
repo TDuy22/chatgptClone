@@ -1,9 +1,9 @@
 import { Flex, IconButton } from '@chakra-ui/react';
-import { ChatGPTMenu } from './ChatGPTMenu';
-import { Avatar } from './components/ui/avatar';
-import { Tooltip } from './components/ui/tooltip';
-import { NewChatIcon, SidebarIcon } from './icons/sidebar-icons';
-import { useSidebarContext } from './sidebar-context';
+import { Avatar } from '@/components/ui/avatar';
+import { Tooltip } from '@/components/ui/tooltip';
+import { NewChatIcon, SidebarIcon } from '@/features/sidebar/icons/sidebar-icons';
+import { useSidebarContext } from '@/features/sidebar/context/SidebarContext';
+import { ChatGPTMenu } from '@/features/sidebar/components/ChatGPTMenu';
 
 export function TopSection() {
   const { sideBarVisible, toggleSidebar } = useSidebarContext();

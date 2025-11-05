@@ -10,16 +10,16 @@ import {
   FileUploadList,
   FileUploadRoot,
   FileUploadTrigger,
-} from './components/ui/file-button';
-import { InputGroup } from './components/ui/input-group';
+} from '@/components/ui/file-button';
+import { InputGroup } from '@/components/ui/input-group';
 import {
   EnterIcon,
   UploadIcon,
-} from './icons/other-icons';
+} from '@/icons/other-icons';
 import { useState } from 'react';
-import { Button } from './components/ui/button';
-import { useChatContext } from './chat-context';
-import { demoResponseService } from './services/demo-response-service';
+import { Button } from '@/components/ui/button';
+import { useChatContext } from '../../context/ChatContext';
+import { demoResponseService } from '@/services/demo-response-service';
 
 export function MiddleSection() {
   const [inputValue, setInputValue] = useState('');

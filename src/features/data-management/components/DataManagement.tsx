@@ -10,7 +10,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useState, useRef } from 'react';
-import { Tooltip } from './components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 
 interface UploadedFile {
   id: string;

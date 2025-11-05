@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { demoResponseService } from './services/demo-response-service';
+import { demoResponseService } from '@/services/demo-response-service';
 
 export interface Message {
   id: string;

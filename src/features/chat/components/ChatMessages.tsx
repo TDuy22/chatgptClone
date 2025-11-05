@@ -1,8 +1,8 @@
 import { Box, Flex, HStack, IconButton, Text, VStack } from '@chakra-ui/react';
-import { useChatContext } from './chat-context';
+import { useChatContext } from '../context/ChatContext';
 import { LuThumbsUp, LuThumbsDown, LuCopy, LuRefreshCw, LuShare } from 'react-icons/lu';
-import { Tooltip } from './components/ui/tooltip';
-import { StreamingText } from './components/streaming-text';
+import { Tooltip } from '@/components/ui/tooltip';
+import { StreamingText } from '@/components/common/StreamingText';
 import { useEffect, useRef } from 'react';
 
 export function ChatMessages() {

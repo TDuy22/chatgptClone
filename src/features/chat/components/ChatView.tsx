@@ -1,10 +1,10 @@
 import { Box, Flex } from '@chakra-ui/react';
-import { BottomSection } from './bottom-section';
-import { MiddleSection } from './middle-section';
-import { TopSection } from './top-section';
-import { ChatProvider, useChatContext } from './chat-context';
-import { ChatMessages } from './chat-messages';
-import { ChatInput } from './chat-input';
+import { ChatProvider, useChatContext } from '../context/ChatContext';
+import { ChatMessages } from './ChatMessages';
+import { ChatInput } from './ChatInput';
+import { TopSection } from './sections/TopSection';
+import { MiddleSection } from './sections/MiddleSection';
+import { BottomSection } from './sections/BottomSection';
 
 function ChatViewContent() {
   const { messages } = useChatContext();

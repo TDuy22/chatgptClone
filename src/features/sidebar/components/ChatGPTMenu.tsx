@@ -13,8 +13,8 @@ import {
   CheckIcon,
   MenuIcon,
   TemporaryChatIcon,
-} from './icons/other-icons';
-import { Switch } from './components/ui/switch';
+} from '@/icons/other-icons';
+import { Switch } from '@/components/ui/switch';
 
 interface MenuItemDetailProps {
   icon: React.ReactElement;

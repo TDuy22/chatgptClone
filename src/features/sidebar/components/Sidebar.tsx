@@ -9,16 +9,16 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useAppContext } from './app-context';
-import { Tooltip } from './components/ui/tooltip';
+import { useAppContext } from '@/contexts/AppContext';
+import { Tooltip } from '@/components/ui/tooltip';
 import {
   DatabaseIcon,
   NewChatIcon,
   SidebarIcon,
   SmallGPTIcon,
-} from './icons/sidebar-icons';
+} from '../icons/sidebar-icons';
 
-import { useSidebarContext } from './sidebar-context';
+import { useSidebarContext } from '../context/SidebarContext';
 
 export function Sidebar() {
   const { sideBarVisible, toggleSidebar } = useSidebarContext();
