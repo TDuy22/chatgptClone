@@ -1,9 +1,10 @@
-import { Box, Flex, HStack, IconButton, Text, VStack } from '@chakra-ui/react';
+import { Box, Flex, HStack, IconButton, VStack } from '@chakra-ui/react';
 import { useChatContext } from '../context/ChatContext';
 import { LuThumbsUp, LuThumbsDown, LuCopy, LuRefreshCw, LuShare } from 'react-icons/lu';
 import { Tooltip } from '@/components/ui/tooltip';
 import { StreamingText } from '@/components/common/StreamingText';
 import { useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 export function ChatMessages() {
   const { messages, setMessageStreaming } = useChatContext();
@@ -52,10 +53,23 @@ export function ChatMessages() {
                 px='4'
                 py='3'
                 borderRadius='2xl'
+                css={{
+                  '& p': { marginBottom: '0.5rem' },
+                  '& strong': { fontWeight: 'bold' },
+                  '& em': { fontStyle: 'italic' },
+                  '& code': { 
+                    background: 'rgba(255, 255, 255, 0.15)', 
+                    padding: '0.125rem 0.25rem', 
+                    borderRadius: '0.125rem', 
+                    fontSize: '0.875rem' 
+                  },
+                  '& ul, & ol': { marginLeft: '1.5rem', marginBottom: '0.5rem' },
+                  '& li': { marginBottom: '0.25rem' },
+                }}
               >
-                <Text fontSize='md' color='fg' whiteSpace='pre-wrap' lineHeight='1.7'>
-                  {message.content}
-                </Text>
+                <Box fontSize='md' color='fg' lineHeight='1.7'>
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
+                </Box>
               </Box>
             ) : (
               // Assistant message: left-aligned, full width
@@ -66,9 +80,49 @@ export function ChatMessages() {
                     onStreamComplete={() => setMessageStreaming(message.id, false)}
                   />
                 ) : (
-                  <Text fontSize='md' color='fg' whiteSpace='pre-wrap' lineHeight='1.7'>
-                    {message.content}
-                  </Text>
+                  <Box 
+                    fontSize='md' 
+                    color='fg' 
+                    lineHeight='1.7'
+                    css={{
+                      '& p': { marginBottom: '1rem' },
+                      '& strong': { fontWeight: 'bold' },
+                      '& em': { fontStyle: 'italic' },
+                      '& code': { 
+                        background: 'rgba(255, 255, 255, 0.1)', 
+                        padding: '0.125rem 0.25rem', 
+                        borderRadius: '0.25rem', 
+                        fontSize: '0.875rem' 
+                      },
+                      '& pre': { 
+                        background: 'rgba(255, 255, 255, 0.05)', 
+                        padding: '1rem', 
+                        borderRadius: '0.5rem', 
+                        overflowX: 'auto',
+                        marginBottom: '1rem'
+                      },
+                      '& pre code': {
+                        background: 'transparent',
+                        padding: '0'
+                      },
+                      '& ul, & ol': { marginLeft: '1.5rem', marginBottom: '1rem' },
+                      '& li': { marginBottom: '0.5rem' },
+                      '& h1, & h2, & h3, & h4, & h5, & h6': { 
+                        fontWeight: 'bold', 
+                        marginTop: '1rem', 
+                        marginBottom: '0.5rem' 
+                      },
+                      '& blockquote': {
+                        borderLeft: '4px solid rgba(255, 255, 255, 0.2)',
+                        paddingLeft: '1rem',
+                        marginLeft: '0',
+                        marginBottom: '1rem',
+                        color: 'rgba(255, 255, 255, 0.7)'
+                      }
+                    }}
+                  >
+                    <ReactMarkdown>{message.content}</ReactMarkdown>
+                  </Box>
                 )}
                 
                 {!message.isStreaming && (

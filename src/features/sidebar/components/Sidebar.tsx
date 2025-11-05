@@ -74,11 +74,8 @@ export function Sidebar() {
             bg={currentView === 'chat' ? 'bg.emphasized' : 'transparent'}
           >
             <Link variant='plain' _hover={{ textDecor: 'none' }}>
-              <Circle size='6' bg='bg' borderWidth='1px'>
-                <SmallGPTIcon fontSize='md' />
-              </Circle>
               <Text fontSize='sm' fontWeight='md'>
-                Askify
+                New chat
               </Text>
             </Link>
             <AbsoluteCenter

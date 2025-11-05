@@ -4,7 +4,7 @@
     "sender": "bot",
     "timestamp": "2025-11-04T12:30:00Z",
     "content": {
-      "answer": "Mỗi đoạn trong câu trả lời có thể sẽ có hoặc không có metadata [1]. Metadata này chính là file PDF mà mô hình dùng để trả lời, và bạn cần trích dẫn (cite) cả trang của tài liệu đó [1]. Khi người dùng bấm vào trích dẫn, hệ thống sẽ hiển thị file và mở đúng trang đã được ghi [2].",
+      "answer": "Mỗi đoạn trong câu trả lời có thể sẽ có hoặc không có **metadata** [1].\n\nMetadata này chính là file PDF mà mô hình dùng để trả lời, và bạn cần *trích dẫn (cite)* cả trang của tài liệu đó [1]. Khi người dùng bấm vào trích dẫn, hệ thống sẽ hiển thị file và mở đúng trang đã được ghi [2].",
       "sources": [
         {
           "id": "1",
@@ -36,14 +36,14 @@
     "sender": "bot",
     "timestamp": "2025-11-04T12:35:00Z",
     "content": {
-      "answer": "Để triển khai front-end, bạn sẽ cần phân tích (parse) trường 'answer' để tìm các thẻ trích dẫn như [3]. Sau đó, bạn dùng thông tin từ mảng 'sources' để tạo các liên kết hoặc pop-up tương ứng [3].",
+      "answer": "Để triển khai front-end, bạn cần làm 2 bước chính:\n\n1.  Phân tích (parse) trường `answer` để tìm các thẻ trích dẫn (ví dụ: `[3]`).\n2.  Dùng thông tin từ mảng `sources` để tạo các liên kết hoặc pop-up tương ứng [3].",
       "sources": [
         {
           "id": "3",
           "fileName": "frontend_dev_guide.pdf",
           "pageNumber": 8,
           "fileUrl": "/api/documents/frontend_dev_guide.pdf",
-          "snippet": "Regex có thể được sử dụng để trích xuất các ID trích dẫn (ví dụ: /[(d+)]/g) từ chuỗi văn bản trả về."
+          "snippet": "Regex có thể được sử dụng để trích xuất các ID trích dẫn (ví dụ: /\\[(\\d+)\\]/g) từ chuỗi văn bản trả về."
         }
       ]
     }
@@ -53,7 +53,7 @@
     "sender": "bot",
     "timestamp": "2025-11-04T12:40:00Z",
     "content": {
-      "answer": "Ngoài ra, hãy đảm bảo xử lý trường hợp trích dẫn không tìm thấy nguồn (source) tương ứng một cách mượt mà, ví dụ như hiển thị một thông báo lỗi [4].",
+      "answer": "Ngoài ra, hãy **đảm bảo xử lý** trường hợp trích dẫn không tìm thấy nguồn (`source`) tương ứng một cách mượt mà, ví dụ như hiển thị một thông báo lỗi [4].",
       "sources": [
         {
           "id": "4",
