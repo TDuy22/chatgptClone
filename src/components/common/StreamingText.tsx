@@ -4,15 +4,18 @@ import { useEffect, useRef } from 'react';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { CitationBadge } from './CitationBadge';
+import { useChatContext } from '@/features/chat/context/ChatContext';
 
 interface StreamingTextProps {
   content: string;
   onStreamComplete?: () => void;
+  messageId?: string;
 }
 
-export function StreamingText({ content, onStreamComplete }: StreamingTextProps) {
+export function StreamingText({ content, onStreamComplete, messageId }: StreamingTextProps) {
   const { displayedText, isStreaming } = useStreamingText(content, 20);
   const hasCalledCompleteRef = useRef(false);
+  const { messages, setSelectedSource } = useChatContext();
 
   console.log('StreamingText render:', { 
     contentLength: content.length, 
@@ -28,8 +31,24 @@ export function StreamingText({ content, onStreamComplete }: StreamingTextProps)
   }, [isStreaming, displayedText, onStreamComplete]);
 
   const handleCitationClick = (citationId: number) => {
-    console.log('Citation clicked:', citationId);
-    // TODO: Scroll to reference or show citation details
+    console.log('🔍 Citation clicked in streaming:', citationId, 'messageId:', messageId);
+    console.log('📋 All messages:', messages);
+    
+    // Find the source from messages
+    for (const message of messages) {
+      console.log('🔎 Checking message:', message.id, 'role:', message.role, 'has sources:', !!message.sources);
+      if (message.role === 'assistant' && message.sources && (!messageId || message.id === messageId)) {
+        console.log('📚 Message sources:', message.sources);
+        const source = message.sources.find(s => s.id === citationId.toString());
+        if (source) {
+          console.log('✅ Found source:', source);
+          setSelectedSource(source);
+          return;
+        }
+      }
+    }
+    
+    console.warn('❌ Source not found for citation:', citationId);
   };
 
   // Custom component to render text with citations

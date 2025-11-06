@@ -32,11 +32,15 @@ class DemoResponseService {
       }
       
       const data = await response.json();
+      console.log('📥 Raw data from JSON:', data);
+      
       // Chỉ lấy responses từ bot
       this.responses = data.filter((item: DemoResponse) => item.sender === 'bot');
       this.isLoaded = true;
       
       console.log('✅ Loaded', this.responses.length, 'demo responses');
+      console.log('📚 First response:', JSON.stringify(this.responses[0], null, 2));
+      console.log('📚 First response sources:', this.responses[0]?.content?.sources);
     } catch (error) {
       console.error('❌ Error loading demo responses:', error);
       // Fallback responses nếu không load được file
@@ -55,32 +59,30 @@ class DemoResponseService {
     }
   }
 
-  getNextResponse(): string {
+  /**
+   * Get next response with sources.
+   * Returns both answer and sources together to avoid index mismatch.
+   */
+  getNextResponseWithSources(): { answer: string; sources: Source[] } {
     if (!this.isLoaded || this.responses.length === 0) {
-      return 'Đang tải dữ liệu...';
+      return { answer: 'Đang tải dữ liệu...', sources: [] };
     }
 
     const response = this.responses[this.currentIndex];
     
-    // Di chuyển đến response tiếp theo (loop lại nếu hết)
+    console.log(`📦 getNextResponseWithSources - currentIndex: ${this.currentIndex}/${this.responses.length}`);
+    console.log('📦 Response:', response);
+    console.log('📦 Answer:', response.content.answer.substring(0, 50) + '...');
+    console.log('📦 Sources COUNT:', response.content.sources?.length || 0);
+    console.log('📦 Sources:', response.content.sources);
+    
+    // Di chuyển đến response tiếp theo
     this.currentIndex = (this.currentIndex + 1) % this.responses.length;
     
-    console.log(`📝 Response ${this.currentIndex}/${this.responses.length}:`, response.content.answer.substring(0, 50) + '...');
-    
-    return response.content.answer;
-  }
-
-  getCurrentResponseWithSources(): DemoResponse | null {
-    if (!this.isLoaded || this.responses.length === 0) {
-      return null;
-    }
-
-    // Lấy response trước đó (vừa được trả về)
-    const prevIndex = this.currentIndex === 0 
-      ? this.responses.length - 1 
-      : this.currentIndex - 1;
-    
-    return this.responses[prevIndex];
+    return {
+      answer: response.content.answer,
+      sources: response.content.sources || []
+    };
   }
 
   reset(): void {

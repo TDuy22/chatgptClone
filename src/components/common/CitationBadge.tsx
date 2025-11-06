@@ -6,10 +6,15 @@ interface CitationBadgeProps {
 }
 
 export function CitationBadge({ citationId, onClick }: CitationBadgeProps) {
+  const handleClick = () => {
+    console.log('🎯 CitationBadge clicked:', citationId);
+    onClick?.(citationId);
+  };
+
   return (
     <Badge
       as='button'
-      onClick={() => onClick?.(citationId)}
+      onClick={handleClick}
       colorScheme='blue'
       borderRadius='full'
       px='2'

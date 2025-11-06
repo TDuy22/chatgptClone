@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { demoResponseService } from '@/services/demo-response-service';
+import { demoResponseService, Source } from '@/services/demo-response-service';
 import { useAppContext } from '@/contexts/AppContext';
 
 export interface Message {
@@ -8,16 +8,20 @@ export interface Message {
   content: string;
   timestamp: Date;
   isStreaming?: boolean;
+  sources?: Source[]; // Add sources to message
 }
 
 interface ChatContextType {
   messages: Message[];
-  addMessage: (content: string, role: 'user' | 'assistant') => void;
+  addMessage: (content: string, role: 'user' | 'assistant', sources?: Source[]) => void;
   updateLastMessage: (content: string) => void;
   setMessageStreaming: (id: string, isStreaming: boolean) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
   clearMessages: () => void;
+  selectedSource: Source | null;
+  setSelectedSource: (source: Source | null) => void;
+  getSourceById: (messageId: string, citationId: string) => Source | null;
 }
 
 const ChatContext = createContext({} as ChatContextType);
@@ -25,6 +29,7 @@ const ChatContext = createContext({} as ChatContextType);
 export const ChatProvider = (props: { children: React.ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedSource, setSelectedSource] = useState<Source | null>(null);
   const [lastLoadedChatId, setLastLoadedChatId] = useState<string | null>(null);
   const creatingChatRef = useRef<string | null>(null); // Track chat being created
   const { currentChatId, getCurrentChatHistory, updateChatHistory, addChatHistory } = useAppContext();
@@ -40,11 +45,20 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     if (currentChatId !== lastLoadedChatId) {
       const currentChat = getCurrentChatHistory();
       if (currentChat) {
+        console.log('📖 Loading messages from chat history');
+        console.log('📖 Current chat:', currentChat);
+        console.log('📖 Messages:', currentChat.messages);
+        console.log('📖 Sources in messages:', currentChat.messages?.map(m => ({ id: m.id, sourcesCount: m.sources?.length })));
+        
         // Load messages and set isStreaming to false for all messages
         const loadedMessages = (currentChat.messages || []).map(msg => ({
           ...msg,
           isStreaming: false, // Never stream when loading from history
         }));
+        
+        console.log('📖 Loaded messages:', loadedMessages);
+        console.log('📖 Sources after mapping:', loadedMessages.map(m => ({ id: m.id, sourcesCount: m.sources?.length })));
+        
         setMessages(loadedMessages);
       } else {
         setMessages([]);
@@ -74,6 +88,10 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
         );
       
       if (messagesChanged) {
+        console.log('💾 Saving messages to chat history');
+        console.log('💾 Messages to save:', messages);
+        console.log('💾 Sources in messages:', messages.map(m => ({ id: m.id, sourcesCount: m.sources?.length })));
+        
         // Update title from first user message if still "New Chat"
         let title = currentChat?.title || 'New Chat';
         if (title === 'New Chat') {
@@ -94,14 +112,20 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     }
   }, [messages, currentChatId, lastLoadedChatId, getCurrentChatHistory, updateChatHistory]);
 
-  const addMessage = (content: string, role: 'user' | 'assistant') => {
+  const addMessage = (content: string, role: 'user' | 'assistant', sources?: Source[]) => {
     const newMessage: Message = {
       id: Date.now().toString(),
       role,
       content,
       timestamp: new Date(),
       isStreaming: role === 'assistant',
+      sources: sources || [],
     };
+    
+    console.log('➕ addMessage called with sources:', sources);
+    console.log('➕ sources length:', sources?.length);
+    console.log('➕ New message object:', newMessage);
+    console.log('➕ New message sources:', newMessage.sources);
     
     // Create new chat if there's no current chat and not already creating one
     if (!currentChatId && !creatingChatRef.current) {
@@ -112,7 +136,12 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
       setLastLoadedChatId(newChatId);
     }
     
-    setMessages((prev: Message[]) => [...prev, newMessage]);
+    setMessages((prev: Message[]) => {
+      const updated = [...prev, newMessage];
+      console.log('➕ Updated messages array:', updated);
+      console.log('➕ Last message sources:', updated[updated.length - 1]?.sources);
+      return updated;
+    });
   };
 
   const updateLastMessage = (content: string) => {
@@ -135,6 +164,14 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     setMessages([]);
   };
 
+  const getSourceById = (messageId: string, citationId: string): Source | null => {
+    const message = messages.find(msg => msg.id === messageId);
+    if (!message || !message.sources) {
+      return null;
+    }
+    return message.sources.find(source => source.id === citationId) || null;
+  };
+
   return (
     <ChatContext.Provider 
       value={{ 
@@ -145,6 +182,9 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
         isLoading, 
         setIsLoading,
         clearMessages,
+        selectedSource,
+        setSelectedSource,
+        getSourceById,
       }}
     >
       {props.children}

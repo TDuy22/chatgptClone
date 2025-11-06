@@ -28,6 +28,19 @@ export const AppProvider = (props: { children: React.ReactNode }) => {
     if (savedHistories) {
       try {
         const parsed = JSON.parse(savedHistories);
+        
+        // Check if old format (messages without sources field)
+        const needsMigration = parsed.some((h: ChatHistory) => 
+          h.messages.some((m: any) => m.role === 'assistant' && m.sources === undefined)
+        );
+        
+        if (needsMigration) {
+          console.log('🔄 Detected old chat format, clearing localStorage...');
+          localStorage.removeItem('chatHistories');
+          setChatHistories([]);
+          return;
+        }
+        
         // Convert date strings back to Date objects
         const histories = parsed.map((h: ChatHistory) => ({
           ...h,
@@ -78,6 +91,16 @@ export const AppProvider = (props: { children: React.ReactNode }) => {
   };
 
   const updateChatHistory = (id: string, updates: Partial<ChatHistory>) => {
+    console.log('💾 AppContext - updateChatHistory called');
+    console.log('💾 AppContext - Chat ID:', id);
+    console.log('💾 AppContext - Updates:', updates);
+    console.log('💾 AppContext - Messages in updates:', updates.messages?.map(m => ({ 
+      id: m.id, 
+      role: m.role, 
+      sourcesCount: m.sources?.length || 0,
+      sources: m.sources
+    })));
+    
     setChatHistories(prev => 
       prev.map(chat => 
         chat.id === id 

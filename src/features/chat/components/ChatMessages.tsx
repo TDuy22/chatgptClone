@@ -9,7 +9,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
 export function ChatMessages() {
-  const { messages, setMessageStreaming } = useChatContext();
+  const { messages, setMessageStreaming, setSelectedSource } = useChatContext();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -32,8 +32,33 @@ export function ChatMessages() {
   }, [messages]);
 
   const handleCitationClick = (citationId: number) => {
-    console.log('Citation clicked:', citationId);
-    // TODO: Scroll to reference or show citation details
+    console.log('🔍 Citation clicked:', citationId);
+    console.log('📋 All messages:', messages);
+    
+    // Find the source from the assistant messages
+    // Search through all assistant messages to find the source
+    for (const message of messages) {
+      console.log('🔎 Checking message:', message.id, 'role:', message.role, 
+                  'has sources:', !!message.sources, 'sources length:', message.sources?.length || 0);
+      
+      if (message.role === 'assistant' && message.sources && message.sources.length > 0) {
+        console.log('📚 Message sources:', message.sources);
+        console.log('📚 Looking for citation ID:', citationId, 'as string:', citationId.toString());
+        
+        const source = message.sources.find(s => {
+          console.log('  🔍 Comparing source.id:', s.id, 'with citationId:', citationId.toString(), 'match:', s.id === citationId.toString());
+          return s.id === citationId.toString();
+        });
+        
+        if (source) {
+          console.log('✅ Found source:', source);
+          setSelectedSource(source);
+          return;
+        }
+      }
+    }
+    
+    console.warn('❌ Source not found for citation:', citationId);
   };
 
   // Custom component to render text with citations
@@ -159,6 +184,7 @@ export function ChatMessages() {
                 {message.isStreaming ? (
                   <StreamingText 
                     content={message.content}
+                    messageId={message.id}
                     onStreamComplete={() => setMessageStreaming(message.id, false)}
                   />
                 ) : (

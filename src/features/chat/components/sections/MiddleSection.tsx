@@ -33,15 +33,23 @@ export function MiddleSection() {
     const message = inputValue.trim();
     if (message === '') return;
 
-    // Add user message
-    addMessage(message, 'user');
+    // Add user message (user messages don't have sources)
+    addMessage(message, 'user', []);
     setInputValue('');
     setIsLoading(true);
 
     // Get response from demo JSON file
     setTimeout(() => {
-      const response = demoResponseService.getNextResponse();
-      addMessage(response, 'assistant');
+      // Get answer and sources together (avoid index mismatch)
+      const { answer, sources } = demoResponseService.getNextResponseWithSources();
+      
+      console.log('📦 MiddleSection - Response answer:', answer.substring(0, 50) + '...');
+      console.log('📦 MiddleSection - Response sources COUNT:', sources.length);
+      console.log('📦 MiddleSection - Response sources:', JSON.stringify(sources, null, 2));
+      console.log('📦 MiddleSection - About to call addMessage with sources:', sources);
+      
+      // Add assistant message with sources
+      addMessage(answer, 'assistant', sources);
       setIsLoading(false);
     }, 500);
   };

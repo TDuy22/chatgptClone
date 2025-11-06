@@ -8,16 +8,16 @@
       "sources": [
         {
           "id": "1",
-          "fileName": "project_specs.pdf",
+          "fileName": "42321400.pdf",
           "pageNumber": 4,
-          "fileUrl": "/api/documents/project_specs.pdf",
+          "fileUrl": "public/data/42321400.pdf",
           "snippet": "Để đảm bảo tính chính xác, mỗi câu trả lời phải được liên kết với metadata... bao gồm tên file và số trang cụ thể."
         },
         {
           "id": "2",
-          "fileName": "ux_design_requirements.docx",
+          "fileName": "42321400.pdf",
           "pageNumber": 2,
-          "fileUrl": "/api/documents/ux_design_requirements.docx",
+          "fileUrl": "public/data42321400.pdf",
           "snippet": "Tính năng 'Click-to-Source': Cho phép người dùng bấm vào trích dẫn [id] để mở file nguồn tại đúng trang [page]."
         }
       ]
@@ -40,9 +40,9 @@
       "sources": [
         {
           "id": "3",
-          "fileName": "frontend_dev_guide.pdf",
+          "fileName": "TKDE.2006.150.pdf",
           "pageNumber": 8,
-          "fileUrl": "/api/documents/frontend_dev_guide.pdf",
+          "fileUrl": "public/data/TKDE.2006.150.pdf",
           "snippet": "Regex có thể được sử dụng để trích xuất các ID trích dẫn (ví dụ: /\\[(\\d+)\\]/g) từ chuỗi văn bản trả về."
         }
       ]
@@ -57,9 +57,9 @@
       "sources": [
         {
           "id": "4",
-          "fileName": "error_handling.txt",
+          "fileName": "TKDE.2006.150.pdf",
           "pageNumber": 1,
-          "fileUrl": "/api/documents/error_handling.txt",
+          "fileUrl": "public/data/TKDE.2006.150.pdf",
           "snippet": "Nếu một ID trích dẫn trong 'answer' không có mục 'source' tương ứng, hãy vô hiệu hóa liên kết đó."
         }
       ]
