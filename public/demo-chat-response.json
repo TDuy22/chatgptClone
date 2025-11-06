@@ -1,5 +1,27 @@
 [
   {
+  "messageId": "msg_bot_coc_vang",
+  "sender": "bot",
+  "timestamp": "2025-11-07T00:25:00Z",
+  "content": {
+    "blocks": [
+      {
+        "type": "markdown",
+        "body": "Dựa theo phụ lục về *Quy chế khen thưởng cuối học kỳ dành cho sinh viên* [1] của trường đại học FPT Điều kiện để được cóc vàng gồm các tiêu chí sau:\n\n* *Tiêu chí chung:*\n    * Sinh viên đạt kết quả tất cả các học phần của học kỳ tương ứng (chỉ tính lần học đầu tiên). Không áp dụng cho sinh viên có học phần chuyển đổi tín chỉ.\n    * Không áp dụng cho sinh viên đang trong giai đoạn học Tiếng Anh dự bị và OJT (On-the-job Training).\n\n* *Tiêu chí riêng:*\n    * Sinh viên có điểm trung bình chung học kỳ (GPA) cao nhất trong toàn bộ sinh viên cùng khối ngành tại mỗi cơ sở đào tạo.\n    * Điểm phong trào đạt từ 80 trở lên.\n    * Trong trường hợp đặc biệt, danh hiệu Cóc Vàng sẽ do Hội đồng khen thưởng kỷ luật của Trường Đại học FPT xem xét và quyết định.\n\n* *Trị giá giải thưởng:*\n    * Tiền mặt trị giá 10.000.000 đồng/sinh viên hoặc giải thưởng theo thỏa thuận với Nhà tài trợ.\n    * Giấy khen và biểu tượng Cóc Vàng."
+      }
+    ],
+    "sources": [
+      {
+        "id": "1",
+        "fileName": "Quy-che-khen-thuong-FPT.pdf",
+        "pageNumber": 1,
+        "fileUrl": "data/Quy-che-khen-thuong-FPT.pdf",
+        "snippet": "Phụ lục về Quy chế khen thưởng cuối học kỳ dành cho sinh viên, Trường Đại học FPT."
+      }
+    ]
+  }
+},
+  {
     "messageId": "msg_bot_1",
     "sender": "bot",
     "timestamp": "2025-11-06T17:50:00Z",

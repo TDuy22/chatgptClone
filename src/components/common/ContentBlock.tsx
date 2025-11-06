@@ -133,8 +133,23 @@ export function ContentBlock({ block, sources, onCitationClick }: ContentBlockPr
               background: 'transparent',
               padding: '0',
             },
-            '& ul, & ol': { marginLeft: '1.5rem', marginBottom: '1rem' },
-            '& li': { marginBottom: '0.5rem' },
+            '& ul': { 
+              listStyleType: 'disc', 
+              paddingLeft: '1.5rem', 
+              marginLeft: '0.5rem',
+              marginBottom: '1rem' 
+            },
+            '& ul ul': { 
+              listStyleType: 'circle',
+              marginTop: '0.25rem'
+            },
+            '& ol': { 
+              listStyleType: 'decimal', 
+              paddingLeft: '1.5rem', 
+              marginLeft: '0.5rem',
+              marginBottom: '1rem' 
+            },
+            '& li': { marginBottom: '0.25rem' },
             '& h1, & h2, & h3, & h4, & h5, & h6': {
               fontWeight: 'bold',
               marginTop: '1rem',
