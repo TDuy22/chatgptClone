@@ -9,8 +9,10 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Tooltip } from '@/components/ui/tooltip';
+
+type FileStatus = 'processing' | 'completed';
 
 interface UploadedFile {
   id: string;
@@ -19,12 +21,138 @@ interface UploadedFile {
   type: string;
   uploadDate: Date;
   file: File;
+  status: FileStatus;
+}
+
+interface StoredFileData {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  uploadDate: string;
+  fileData: string; // Base64 encoded file
+  status: FileStatus;
 }
 
 export function DataManagement() {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const statusTimersRef = useRef<Map<string, number>>(new Map());
+
+  const STORAGE_KEY = 'chatgpt-uploaded-files';
+
+  // Load files from localStorage khi component mount
+  useEffect(() => {
+    const loadFilesFromStorage = async () => {
+      try {
+        const storedData = localStorage.getItem(STORAGE_KEY);
+        if (storedData) {
+          const storedFiles: StoredFileData[] = JSON.parse(storedData);
+          
+          // Convert stored data back to UploadedFile format
+          const restoredFiles: UploadedFile[] = await Promise.all(
+            storedFiles.map(async (stored) => {
+              // Convert base64 back to File
+              const response = await fetch(stored.fileData);
+              const blob = await response.blob();
+              const file = new File([blob], stored.name, { type: stored.type });
+              
+              return {
+                id: stored.id,
+                name: stored.name,
+                size: stored.size,
+                type: stored.type,
+                uploadDate: new Date(stored.uploadDate),
+                file: file,
+                status: stored.status,
+              };
+            })
+          );
+          
+          setUploadedFiles(restoredFiles);
+          
+          // Restart timers cho các file đang processing
+          restoredFiles.forEach((file) => {
+            if (file.status === 'processing') {
+              const elapsedTime = Date.now() - file.uploadDate.getTime();
+              const remainingTime = Math.max(0, 30000 - elapsedTime);
+              
+              if (remainingTime > 0) {
+                const timerId = window.setTimeout(() => {
+                  setUploadedFiles((currentFiles) =>
+                    currentFiles.map((f) =>
+                      f.id === file.id ? { ...f, status: 'completed' as FileStatus } : f
+                    )
+                  );
+                  statusTimersRef.current.delete(file.id);
+                }, remainingTime);
+                
+                statusTimersRef.current.set(file.id, timerId);
+              } else {
+                // Nếu đã quá 30s, set thành completed ngay
+                setUploadedFiles((currentFiles) =>
+                  currentFiles.map((f) =>
+                    f.id === file.id ? { ...f, status: 'completed' as FileStatus } : f
+                  )
+                );
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error loading files from localStorage:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadFilesFromStorage();
+
+    // Cleanup timers khi unmount
+    return () => {
+      statusTimersRef.current.forEach((timerId) => clearTimeout(timerId));
+      statusTimersRef.current.clear();
+    };
+  }, []);
+
+  // Save files to localStorage khi uploadedFiles thay đổi
+  useEffect(() => {
+    if (!isLoading && uploadedFiles.length >= 0) {
+      const saveFilesToStorage = async () => {
+        try {
+          // Convert files to storable format
+          const filesToStore: StoredFileData[] = await Promise.all(
+            uploadedFiles.map(async (file) => {
+              // Convert File to base64
+              const reader = new FileReader();
+              const fileData = await new Promise<string>((resolve) => {
+                reader.onloadend = () => resolve(reader.result as string);
+                reader.readAsDataURL(file.file);
+              });
+              
+              return {
+                id: file.id,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                uploadDate: file.uploadDate.toISOString(),
+                fileData: fileData,
+                status: file.status,
+              };
+            })
+          );
+          
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(filesToStore));
+        } catch (error) {
+          console.error('Error saving files to localStorage:', error);
+        }
+      };
+
+      saveFilesToStorage();
+    }
+  }, [uploadedFiles, isLoading]);
 
   const processFiles = (files: FileList | File[]) => {
     const newFiles: UploadedFile[] = Array.from(files).map((file) => ({
@@ -34,9 +162,24 @@ export function DataManagement() {
       type: file.type,
       uploadDate: new Date(),
       file: file,
+      status: 'processing' as FileStatus,
     }));
 
     setUploadedFiles((prev) => [...prev, ...newFiles]);
+
+    // Tự động chuyển status thành 'completed' sau 30 giây
+    newFiles.forEach((newFile) => {
+      const timerId = window.setTimeout(() => {
+        setUploadedFiles((currentFiles) =>
+          currentFiles.map((f) =>
+            f.id === newFile.id ? { ...f, status: 'completed' as FileStatus } : f
+          )
+        );
+        statusTimersRef.current.delete(newFile.id);
+      }, 30000); // 30 giây
+      
+      statusTimersRef.current.set(newFile.id, timerId);
+    });
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,6 +215,13 @@ export function DataManagement() {
   };
 
   const handleDeleteFile = (fileId: string) => {
+    // Clear timer nếu có
+    const timerId = statusTimersRef.current.get(fileId);
+    if (timerId) {
+      clearTimeout(timerId);
+      statusTimersRef.current.delete(fileId);
+    }
+    
     setUploadedFiles((prev) => prev.filter((file) => file.id !== fileId));
   };
 
@@ -86,6 +236,18 @@ export function DataManagement() {
   const formatDate = (date: Date): string => {
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
   };
+
+  // Show loading state khi đang load từ localStorage
+  if (isLoading) {
+    return (
+      <Box flex="1" p="6" h="full" overflow="auto" minW="0">
+        <VStack align="center" justify="center" h="full" gap="4">
+          <Box fontSize="4xl">⏳</Box>
+          <Text fontSize="lg" color="fg.subtle">Đang tải dữ liệu...</Text>
+        </VStack>
+      </Box>
+    );
+  }
 
   return (
     <Box flex="1" p="6" h="full" overflow="auto" minW="0">
@@ -254,6 +416,41 @@ export function DataManagement() {
                         >
                           <VStack align="stretch" gap="2">
                             <HStack justify="space-between">
+                              <Text fontSize="xs" color="fg.subtle" fontWeight="medium">Trạng thái:</Text>
+                              <HStack gap="2">
+                                {file.status === 'processing' ? (
+                                  <>
+                                    <Box 
+                                      as="span" 
+                                      display="inline-block" 
+                                      w="2" 
+                                      h="2" 
+                                      bg="yellow.500" 
+                                      borderRadius="full"
+                                      animation="pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite"
+                                    />
+                                    <Text fontSize="xs" fontWeight="semibold" color="yellow.600">
+                                      Đang xử lý...
+                                    </Text>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Box 
+                                      as="span" 
+                                      display="inline-block" 
+                                      w="2" 
+                                      h="2" 
+                                      bg="green.500" 
+                                      borderRadius="full"
+                                    />
+                                    <Text fontSize="xs" fontWeight="semibold" color="green.600">
+                                      Hoàn thành
+                                    </Text>
+                                  </>
+                                )}
+                              </HStack>
+                            </HStack>
+                            <HStack justify="space-between">
                               <Text fontSize="xs" color="fg.subtle" fontWeight="medium">Kích thước:</Text>
                               <Text fontSize="xs" fontWeight="semibold">{formatFileSize(file.size)}</Text>
                             </HStack>
@@ -291,7 +488,7 @@ export function DataManagement() {
                               window.open(url, '_blank');
                             }}
                           >
-                            👁️ Xem
+                             Xem
                           </Button>
                         </HStack>
                       </VStack>
