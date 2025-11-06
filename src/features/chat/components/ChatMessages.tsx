@@ -3,9 +3,8 @@ import { useChatContext } from '../context/ChatContext';
 import { LuThumbsUp, LuThumbsDown, LuCopy } from 'react-icons/lu';
 import { Tooltip } from '@/components/ui/tooltip';
 import { StreamingText } from '@/components/common/StreamingText';
-import { CitationBadge } from '@/components/common/CitationBadge';
+import { ContentBlock } from '@/components/common/ContentBlock';
 import { useEffect, useRef } from 'react';
-import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
 export function ChatMessages() {
@@ -36,7 +35,6 @@ export function ChatMessages() {
     console.log('📋 All messages:', messages);
     
     // Find the source from the assistant messages
-    // Search through all assistant messages to find the source
     for (const message of messages) {
       console.log('🔎 Checking message:', message.id, 'role:', message.role, 
                   'has sources:', !!message.sources, 'sources length:', message.sources?.length || 0);
@@ -61,142 +59,9 @@ export function ChatMessages() {
     console.warn('❌ Source not found for citation:', citationId);
   };
 
-  // Custom component to render text with citations
-  const TextWithCitations = ({ children, messageId }: { children: string; messageId?: string }) => {
-    const citationRegex = /\[(\d+)\]/g;
-    const parts: React.ReactNode[] = [];
-    let lastIndex = 0;
-    let match;
-
-    // Find the message to get sources
-    const currentMessage = messageId ? messages.find(m => m.id === messageId) : null;
-
-    while ((match = citationRegex.exec(children)) !== null) {
-      // Add text before citation
-      if (match.index > lastIndex) {
-        parts.push(children.substring(lastIndex, match.index));
-      }
-      
-      // Find snippet for this citation
-      const citationId = match[1];
-      let snippet: string | undefined;
-      
-      if (currentMessage?.sources) {
-        const source = currentMessage.sources.find(s => s.id === citationId);
-        snippet = source?.snippet;
-      }
-      
-      // Add citation badge with snippet
-      parts.push(
-        <CitationBadge
-          key={`citation-${match[1]}-${match.index}`}
-          citationId={parseInt(match[1])}
-          snippet={snippet}
-          onClick={handleCitationClick}
-        />
-      );
-      lastIndex = match.index + match[0].length;
-    }
-
-    // Add remaining text
-    if (lastIndex < children.length) {
-      parts.push(children.substring(lastIndex));
-    }
-
-    return <>{parts}</>;
-  };
-
-  // Custom renderers for ReactMarkdown
-  const components = {
-    // Handle inline text
-    p: ({ children, ...props }: any) => {
-      const processedChildren = React.Children.map(children, (child) => {
-        if (typeof child === 'string') {
-          return <TextWithCitations>{child}</TextWithCitations>;
-        }
-        return child;
-      });
-      return <p {...props}>{processedChildren}</p>;
-    },
-    // Handle text in list items
-    li: ({ children, ...props }: any) => {
-      const processedChildren = React.Children.map(children, (child) => {
-        if (typeof child === 'string') {
-          return <TextWithCitations>{child}</TextWithCitations>;
-        }
-        return child;
-      });
-      return <li {...props}>{processedChildren}</li>;
-    },
-    // Handle strong/bold text
-    strong: ({ children, ...props }: any) => {
-      const processedChildren = React.Children.map(children, (child) => {
-        if (typeof child === 'string') {
-          return <TextWithCitations>{child}</TextWithCitations>;
-        }
-        return child;
-      });
-      return <strong {...props}>{processedChildren}</strong>;
-    },
-    // Handle em/italic text
-    em: ({ children, ...props }: any) => {
-      const processedChildren = React.Children.map(children, (child) => {
-        if (typeof child === 'string') {
-          return <TextWithCitations>{child}</TextWithCitations>;
-        }
-        return child;
-      });
-      return <em {...props}>{processedChildren}</em>;
-    },
-  };
-
   return (
     <VStack gap='0' align='stretch' flex='1' overflowY='auto'>
       {messages.map((message) => {
-        // Create custom renderers with access to current message
-        const createComponents = (currentMessageId: string) => ({
-          // Handle inline text
-          p: ({ children, ...props }: any) => {
-            const processedChildren = React.Children.map(children, (child) => {
-              if (typeof child === 'string') {
-                return <TextWithCitations messageId={currentMessageId}>{child}</TextWithCitations>;
-              }
-              return child;
-            });
-            return <p {...props}>{processedChildren}</p>;
-          },
-          // Handle text in list items
-          li: ({ children, ...props }: any) => {
-            const processedChildren = React.Children.map(children, (child) => {
-              if (typeof child === 'string') {
-                return <TextWithCitations messageId={currentMessageId}>{child}</TextWithCitations>;
-              }
-              return child;
-            });
-            return <li {...props}>{processedChildren}</li>;
-          },
-          // Handle strong/bold text
-          strong: ({ children, ...props }: any) => {
-            const processedChildren = React.Children.map(children, (child) => {
-              if (typeof child === 'string') {
-                return <TextWithCitations messageId={currentMessageId}>{child}</TextWithCitations>;
-              }
-              return child;
-            });
-            return <strong {...props}>{processedChildren}</strong>;
-          },
-          // Handle em/italic text
-          em: ({ children, ...props }: any) => {
-            const processedChildren = React.Children.map(children, (child) => {
-              if (typeof child === 'string') {
-                return <TextWithCitations messageId={currentMessageId}>{child}</TextWithCitations>;
-              }
-              return child;
-            });
-            return <em {...props}>{processedChildren}</em>;
-          },
-        });
-
         return (
         <Box 
           key={message.id} 
@@ -234,7 +99,7 @@ export function ChatMessages() {
                 }}
               >
                 <Box fontSize='md' color='fg' lineHeight='1.7'>
-                  <ReactMarkdown components={components}>{message.content}</ReactMarkdown>
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
                 </Box>
               </Box>
             ) : (
@@ -242,54 +107,70 @@ export function ChatMessages() {
               <VStack align='start' flex='1' gap='3'>
                 {message.isStreaming ? (
                   <StreamingText 
-                    content={message.content}
+                    blocks={message.blocks || []}
+                    sources={message.sources}
                     messageId={message.id}
                     onStreamComplete={() => setMessageStreaming(message.id, false)}
                   />
                 ) : (
-                  <Box 
-                    fontSize='md' 
-                    color='fg' 
-                    lineHeight='1.7'
-                    css={{
-                      '& p': { marginBottom: '1rem' },
-                      '& strong': { fontWeight: 'bold' },
-                      '& em': { fontStyle: 'italic' },
-                      '& code': { 
-                        background: 'rgba(255, 255, 255, 0.1)', 
-                        padding: '0.125rem 0.25rem', 
-                        borderRadius: '0.25rem', 
-                        fontSize: '0.875rem' 
-                      },
-                      '& pre': { 
-                        background: 'rgba(255, 255, 255, 0.05)', 
-                        padding: '1rem', 
-                        borderRadius: '0.5rem', 
-                        overflowX: 'auto',
-                        marginBottom: '1rem'
-                      },
-                      '& pre code': {
-                        background: 'transparent',
-                        padding: '0'
-                      },
-                      '& ul, & ol': { marginLeft: '1.5rem', marginBottom: '1rem' },
-                      '& li': { marginBottom: '0.5rem' },
-                      '& h1, & h2, & h3, & h4, & h5, & h6': { 
-                        fontWeight: 'bold', 
-                        marginTop: '1rem', 
-                        marginBottom: '0.5rem' 
-                      },
-                      '& blockquote': {
-                        borderLeft: '4px solid rgba(255, 255, 255, 0.2)',
-                        paddingLeft: '1rem',
-                        marginLeft: '0',
-                        marginBottom: '1rem',
-                        color: 'rgba(255, 255, 255, 0.7)'
-                      }
-                    }}
-                  >
-                    <ReactMarkdown components={createComponents(message.id)}>{message.content}</ReactMarkdown>
-                  </Box>
+                  <VStack align='stretch' gap='0' w='full'>
+                    {message.blocks && message.blocks.length > 0 ? (
+                      // Render blocks if available
+                      message.blocks.map((block, index) => (
+                        <ContentBlock 
+                          key={`block-${message.id}-${index}`}
+                          block={block}
+                          sources={message.sources}
+                          onCitationClick={handleCitationClick}
+                        />
+                      ))
+                    ) : (
+                      // Fallback to content string for backward compatibility
+                      <Box 
+                        fontSize='md' 
+                        color='fg' 
+                        lineHeight='1.7'
+                        css={{
+                          '& p': { marginBottom: '1rem' },
+                          '& strong': { fontWeight: 'bold' },
+                          '& em': { fontStyle: 'italic' },
+                          '& code': { 
+                            background: 'rgba(255, 255, 255, 0.1)', 
+                            padding: '0.125rem 0.25rem', 
+                            borderRadius: '0.25rem', 
+                            fontSize: '0.875rem' 
+                          },
+                          '& pre': { 
+                            background: 'rgba(255, 255, 255, 0.05)', 
+                            padding: '1rem', 
+                            borderRadius: '0.5rem', 
+                            overflowX: 'auto',
+                            marginBottom: '1rem'
+                          },
+                          '& pre code': {
+                            background: 'transparent',
+                            padding: '0'
+                          },
+                          '& ul, & ol': { marginLeft: '1.5rem', marginBottom: '1rem' },
+                          '& li': { marginBottom: '0.5rem' },
+                          '& h1, & h2, & h3, & h4, & h5, & h6': { 
+                            fontWeight: 'bold', 
+                            marginTop: '1rem', 
+                            marginBottom: '0.5rem' 
+                          },
+                          '& blockquote': {
+                            borderLeft: '4px solid rgba(255, 255, 255, 0.2)',
+                            paddingLeft: '1rem',
+                            marginLeft: '0',
+                            marginBottom: '1rem',
+                            color: 'rgba(255, 255, 255, 0.7)'
+                          }
+                        }}
+                      >
+                        <ReactMarkdown>{message.content}</ReactMarkdown>
+                      </Box>
+                    )}
+                  </VStack>
                 )}
                 
                 {!message.isStreaming && (

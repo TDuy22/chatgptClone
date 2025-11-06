@@ -1,10 +1,29 @@
 [
   {
-    "messageId": "msg_1a2b3c",
+    "messageId": "msg_bot_1",
     "sender": "bot",
-    "timestamp": "2025-11-04T12:30:00Z",
+    "timestamp": "2025-11-06T17:50:00Z",
     "content": {
-      "answer": "Mỗi đoạn trong câu trả lời có thể sẽ có hoặc không có **metadata** [1].\nMetadata này chính là file PDF mà mô hình dùng để trả lời, và bạn cần *trích dẫn (cite)* cả trang của tài liệu đó. Khi người dùng bấm vào trích dẫn, hệ thống sẽ hiển thị file và mở đúng trang đã được ghi [2].",
+      "blocks": [
+        {
+          "type": "markdown",
+          "body": "Chào bạn, đây là tóm tắt nhanh về các 'feature flags' đang hoạt động [1]:"
+        },
+        {
+          "type": "table",
+          "data": {
+            "headers": [
+              { "key": "flagName", "title": "Tên cờ (Flag)" },
+              { "key": "status", "title": "Trạng thái" },
+              { "key": "rollout", "title": "Tỷ lệ (%)" }
+            ],
+            "rows": [
+              { "flagName": "new-dashboard-ui", "status": "Active", "rollout": "50%" },
+              { "flagName": "payment-gateway-v2", "status": "Testing [2]", "rollout": "10%" }
+            ]
+          }
+        }
+      ],
       "sources": [
         {
           "id": "1",
@@ -24,19 +43,34 @@
     }
   },
   {
-    "messageId": "msg_4d5e6f",
-    "sender": "user",
-    "timestamp": "2025-11-04T12:31:15Z",
-    "content": {
-      "text": "Cảm ơn! Vậy làm thế nào để tôi triển khai tính năng 'Click-to-Source' trên front-end?"
-    }
-  },
-  {
-    "messageId": "msg_7g8h9i",
+    "messageId": "msg_bot_2",
     "sender": "bot",
-    "timestamp": "2025-11-04T12:35:00Z",
+    "timestamp": "2025-11-06T17:51:15Z",
     "content": {
-      "answer": "Để triển khai front-end, bạn cần làm 2 bước chính:\n1.  Phân tích (parse) trường `answer` để tìm các thẻ trích dẫn (ví dụ: `[3]`).\n2.  Dùng thông tin từ mảng `sources` để tạo các liên kết hoặc pop-up tương ứng [3].",
+      "blocks": [
+        {
+          "type": "markdown",
+          "body": "Như đã trao đổi, đây là bảng so sánh về Kafka và RabbitMQ:"
+        },
+        {
+          "type": "table",
+          "data": {
+            "headers": [
+              { "key": "feature", "title": "Đặc điểm" },
+              { "key": "kafka", "title": "Apache Kafka" },
+              { "key": "rabbitmq", "title": "RabbitMQ" }
+            ],
+            "rows": [
+              { "feature": "Mô hình chính", "kafka": "Publish/Subscribe (dựa trên log) [3]", "rabbitmq": "Routing, Queuing [4]" },
+              { "feature": "Thông lượng", "kafka": "Rất cao (Streaming)", "rabbitmq": "Cao (Task queuing)" }
+            ]
+          }
+        },
+        {
+          "type": "markdown",
+          "body": "Hãy chú ý đến sự khác biệt về mô hình lưu trữ của chúng."
+        }
+      ],
       "sources": [
         {
           "id": "3",
@@ -44,21 +78,58 @@
           "pageNumber": 8,
           "fileUrl": "data/TKDE.2006.150.pdf",
           "snippet": "Regex có thể được sử dụng để trích xuất các ID trích dẫn (ví dụ: /\\[(\\d+)\\]/g) từ chuỗi văn bản trả về."
+        },
+                {
+          "id": "4",
+          "fileName": "TKDE.2006.150.pdf",
+          "pageNumber": 2,
+          "fileUrl": "data/TKDE.2006.150.pdf",
+          "snippet": "Regex có thể được sử dụng để trích xuất các ID trích dẫn (ví dụ: /\\[(\\d+)\\]/g) từ chuỗi văn bản trả về."
         }
       ]
     }
   },
   {
-    "messageId": "msg_0j1k2l",
+    "messageId": "msg_bot_3",
     "sender": "bot",
-    "timestamp": "2025-11-04T12:40:00Z",
+    "timestamp": "2025-11-06T17:52:30Z",
     "content": {
-      "answer": "Ngoài ra, hãy **đảm bảo xử lý** trường hợp trích dẫn không tìm thấy nguồn (`source`) tương ứng một cách mượt mà, ví dụ như hiển thị một thông báo lỗi [4].",
+      "blocks": [
+        {
+          "type": "markdown",
+          "body": "Về các mã lỗi bạn hỏi, đây là thông tin chi tiết từ tài liệu [5]:"
+        },
+        {
+          "type": "table",
+          "data": {
+            "headers": [
+              { "key": "code", "title": "Mã lỗi" },
+              { "key": "description", "title": "Mô tả" },
+              { "key": "action", "title": "Hành động" }
+            ],
+            "rows": [
+              { "code": "E-404", "description": "Không tìm thấy tài nguyên", "action": "Kiểm tra lại ID [6]" },
+              { "code": "E-503", "description": "Dịch vụ quá tải", "action": "Thử lại sau" }
+            ]
+          }
+        },
+        {
+          "type": "markdown",
+          "body": "Bạn cần liên hệ admin nếu gặp lỗi `E-503` quá 3 lần."
+        }
+      ],
       "sources": [
         {
-          "id": "4",
+          "id": "5",
           "fileName": "TKDE.2006.150.pdf",
           "pageNumber": 1,
+          "fileUrl": "data/TKDE.2006.150.pdf",
+          "snippet": "Nếu một ID trích dẫn trong 'answer' không có mục 'source' tương ứng, hãy vô hiệu hóa liên kết đó."
+        },
+                {
+          "id": "6",
+          "fileName": "TKDE.2006.150.pdf",
+          "pageNumber": 2,
           "fileUrl": "data/TKDE.2006.150.pdf",
           "snippet": "Nếu một ID trích dẫn trong 'answer' không có mục 'source' tương ứng, hãy vô hiệu hóa liên kết đó."
         }

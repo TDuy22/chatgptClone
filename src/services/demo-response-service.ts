@@ -7,14 +7,42 @@ export interface Source {
   snippet: string;
 }
 
+export interface TableHeader {
+  key: string;
+  title: string;
+}
+
+export interface TableRow {
+  [key: string]: string;
+}
+
+export interface TableData {
+  headers: TableHeader[];
+  rows: TableRow[];
+}
+
+export interface MarkdownBlock {
+  type: 'markdown';
+  body: string;
+}
+
+export interface TableBlock {
+  type: 'table';
+  data: TableData;
+}
+
+export type ContentBlock = MarkdownBlock | TableBlock;
+
+export interface MessageContent {
+  blocks: ContentBlock[];
+  sources?: Source[];
+}
+
 export interface DemoResponse {
   messageId: string;
   sender: 'bot' | 'user';
   timestamp: string;
-  content: {
-    answer: string;
-    sources?: Source[];
-  };
+  content: MessageContent;
 }
 
 class DemoResponseService {
@@ -50,7 +78,12 @@ class DemoResponseService {
           sender: 'bot',
           timestamp: new Date().toISOString(),
           content: {
-            answer: 'Đây là câu trả lời mẫu từ ChatGPT. File demo-chat-response.json không load được.',
+            blocks: [
+              {
+                type: 'markdown',
+                body: 'Đây là câu trả lời mẫu từ ChatGPT. File demo-chat-response.json không load được.'
+              }
+            ],
             sources: []
           }
         }
@@ -61,18 +94,22 @@ class DemoResponseService {
 
   /**
    * Get next response with sources.
-   * Returns both answer and sources together to avoid index mismatch.
+   * Returns both content blocks and sources together to avoid index mismatch.
    */
-  getNextResponseWithSources(): { answer: string; sources: Source[] } {
+  getNextResponseWithSources(): { blocks: ContentBlock[]; sources: Source[] } {
     if (!this.isLoaded || this.responses.length === 0) {
-      return { answer: 'Đang tải dữ liệu...', sources: [] };
+      return { 
+        blocks: [{ type: 'markdown', body: 'Đang tải dữ liệu...' }], 
+        sources: [] 
+      };
     }
 
     const response = this.responses[this.currentIndex];
     
     console.log(`📦 getNextResponseWithSources - currentIndex: ${this.currentIndex}/${this.responses.length}`);
     console.log('📦 Response:', response);
-    console.log('📦 Answer:', response.content.answer.substring(0, 50) + '...');
+    console.log('📦 Blocks COUNT:', response.content.blocks?.length || 0);
+    console.log('📦 Blocks:', response.content.blocks);
     console.log('📦 Sources COUNT:', response.content.sources?.length || 0);
     console.log('📦 Sources:', response.content.sources);
     
@@ -80,7 +117,7 @@ class DemoResponseService {
     this.currentIndex = (this.currentIndex + 1) % this.responses.length;
     
     return {
-      answer: response.content.answer,
+      blocks: response.content.blocks || [],
       sources: response.content.sources || []
     };
   }

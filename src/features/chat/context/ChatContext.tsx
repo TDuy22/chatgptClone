@@ -1,20 +1,22 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { demoResponseService, Source } from '@/services/demo-response-service';
+import { demoResponseService, Source, ContentBlock } from '@/services/demo-response-service';
 import { useAppContext } from '@/contexts/AppContext';
 
 export interface Message {
   id: string;
   role: 'user' | 'assistant';
-  content: string;
+  content: string; // For user messages
+  blocks?: ContentBlock[]; // For assistant messages with structured content
   timestamp: Date;
   isStreaming?: boolean;
-  sources?: Source[]; // Add sources to message
+  sources?: Source[];
 }
 
 interface ChatContextType {
   messages: Message[];
-  addMessage: (content: string, role: 'user' | 'assistant', sources?: Source[]) => void;
+  addMessage: (content: string, role: 'user' | 'assistant', sources?: Source[], blocks?: ContentBlock[]) => void;
   updateLastMessage: (content: string) => void;
+  updateLastMessageBlocks: (blocks: ContentBlock[]) => void;
   setMessageStreaming: (id: string, isStreaming: boolean) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
@@ -112,18 +114,21 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     }
   }, [messages, currentChatId, lastLoadedChatId, getCurrentChatHistory, updateChatHistory]);
 
-  const addMessage = (content: string, role: 'user' | 'assistant', sources?: Source[]) => {
+  const addMessage = (content: string, role: 'user' | 'assistant', sources?: Source[], blocks?: ContentBlock[]) => {
     const newMessage: Message = {
       id: Date.now().toString(),
       role,
       content,
+      blocks, // Add blocks for structured content
       timestamp: new Date(),
       isStreaming: role === 'assistant',
       sources: sources || [],
     };
     
     console.log('➕ addMessage called with sources:', sources);
+    console.log('➕ addMessage called with blocks:', blocks);
     console.log('➕ sources length:', sources?.length);
+    console.log('➕ blocks length:', blocks?.length);
     console.log('➕ New message object:', newMessage);
     console.log('➕ New message sources:', newMessage.sources);
     
@@ -140,6 +145,7 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
       const updated = [...prev, newMessage];
       console.log('➕ Updated messages array:', updated);
       console.log('➕ Last message sources:', updated[updated.length - 1]?.sources);
+      console.log('➕ Last message blocks:', updated[updated.length - 1]?.blocks);
       return updated;
     });
   };
@@ -149,6 +155,16 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
       const newMessages = [...prev];
       if (newMessages.length > 0) {
         newMessages[newMessages.length - 1].content = content;
+      }
+      return newMessages;
+    });
+  };
+
+  const updateLastMessageBlocks = (blocks: ContentBlock[]) => {
+    setMessages((prev: Message[]) => {
+      const newMessages = [...prev];
+      if (newMessages.length > 0) {
+        newMessages[newMessages.length - 1].blocks = blocks;
       }
       return newMessages;
     });
@@ -178,6 +194,7 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
         messages, 
         addMessage, 
         updateLastMessage,
+        updateLastMessageBlocks,
         setMessageStreaming,
         isLoading, 
         setIsLoading,

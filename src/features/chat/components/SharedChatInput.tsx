@@ -37,23 +37,30 @@ export function SharedChatInput({ value: externalValue, onValueChange }: SharedC
     const message = inputValue.trim();
     if (message === '') return;
 
-    // Add user message (user messages don't have sources)
-    addMessage(message, 'user', []);
+    // Add user message (user messages don't have sources or blocks)
+    addMessage(message, 'user', [], undefined);
     setInputValue('');
     setIsLoading(true);
 
     // Get response from demo JSON file
     setTimeout(() => {
-      // Get answer and sources together (avoid index mismatch)
-      const { answer, sources } = demoResponseService.getNextResponseWithSources();
+      // Get blocks and sources together (avoid index mismatch)
+      const { blocks, sources } = demoResponseService.getNextResponseWithSources();
       
-      console.log('📦 SharedChatInput - Response answer:', answer.substring(0, 50) + '...');
+      console.log('📦 SharedChatInput - Response blocks COUNT:', blocks.length);
+      console.log('📦 SharedChatInput - Response blocks:', JSON.stringify(blocks, null, 2));
       console.log('📦 SharedChatInput - Response sources COUNT:', sources.length);
       console.log('📦 SharedChatInput - Response sources:', JSON.stringify(sources, null, 2));
-      console.log('📦 SharedChatInput - About to call addMessage with sources:', sources);
+      console.log('📦 SharedChatInput - About to call addMessage with blocks and sources');
       
-      // Add assistant message with sources
-      addMessage(answer, 'assistant', sources);
+      // Add assistant message with blocks and sources
+      // For backward compatibility, we combine all markdown blocks into content
+      const content = blocks
+        .filter(b => b.type === 'markdown')
+        .map(b => (b as any).body)
+        .join('\n\n');
+      
+      addMessage(content || 'Response', 'assistant', sources, blocks);
       setIsLoading(false);
     }, 500);
   };
