@@ -4,7 +4,7 @@
     "sender": "bot",
     "timestamp": "2025-11-04T12:30:00Z",
     "content": {
-      "answer": "Mỗi đoạn trong câu trả lời có thể sẽ có hoặc không có **metadata** [1].\n\nMetadata này chính là file PDF mà mô hình dùng để trả lời, và bạn cần *trích dẫn (cite)* cả trang của tài liệu đó [1]. Khi người dùng bấm vào trích dẫn, hệ thống sẽ hiển thị file và mở đúng trang đã được ghi [2].",
+      "answer": "Mỗi đoạn trong câu trả lời có thể sẽ có hoặc không có **metadata** [1].\nMetadata này chính là file PDF mà mô hình dùng để trả lời, và bạn cần *trích dẫn (cite)* cả trang của tài liệu đó. Khi người dùng bấm vào trích dẫn, hệ thống sẽ hiển thị file và mở đúng trang đã được ghi [2].",
       "sources": [
         {
           "id": "1",
@@ -36,7 +36,7 @@
     "sender": "bot",
     "timestamp": "2025-11-04T12:35:00Z",
     "content": {
-      "answer": "Để triển khai front-end, bạn cần làm 2 bước chính:\n\n1.  Phân tích (parse) trường `answer` để tìm các thẻ trích dẫn (ví dụ: `[3]`).\n2.  Dùng thông tin từ mảng `sources` để tạo các liên kết hoặc pop-up tương ứng [3].",
+      "answer": "Để triển khai front-end, bạn cần làm 2 bước chính:\n1.  Phân tích (parse) trường `answer` để tìm các thẻ trích dẫn (ví dụ: `[3]`).\n2.  Dùng thông tin từ mảng `sources` để tạo các liên kết hoặc pop-up tương ứng [3].",
       "sources": [
         {
           "id": "3",

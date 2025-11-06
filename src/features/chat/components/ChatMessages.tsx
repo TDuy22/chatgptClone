@@ -1,9 +1,11 @@
 import { Box, Flex, HStack, IconButton, VStack } from '@chakra-ui/react';
 import { useChatContext } from '../context/ChatContext';
-import { LuThumbsUp, LuThumbsDown, LuCopy, LuRefreshCw, LuShare } from 'react-icons/lu';
+import { LuThumbsUp, LuThumbsDown, LuCopy } from 'react-icons/lu';
 import { Tooltip } from '@/components/ui/tooltip';
 import { StreamingText } from '@/components/common/StreamingText';
+import { CitationBadge } from '@/components/common/CitationBadge';
 import { useEffect, useRef } from 'react';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
 export function ChatMessages() {
@@ -28,6 +30,86 @@ export function ChatMessages() {
       return () => clearInterval(interval);
     }
   }, [messages]);
+
+  const handleCitationClick = (citationId: number) => {
+    console.log('Citation clicked:', citationId);
+    // TODO: Scroll to reference or show citation details
+  };
+
+  // Custom component to render text with citations
+  const TextWithCitations = ({ children }: { children: string }) => {
+    const citationRegex = /\[(\d+)\]/g;
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = citationRegex.exec(children)) !== null) {
+      // Add text before citation
+      if (match.index > lastIndex) {
+        parts.push(children.substring(lastIndex, match.index));
+      }
+      // Add citation badge
+      parts.push(
+        <CitationBadge
+          key={`citation-${match[1]}-${match.index}`}
+          citationId={parseInt(match[1])}
+          onClick={handleCitationClick}
+        />
+      );
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Add remaining text
+    if (lastIndex < children.length) {
+      parts.push(children.substring(lastIndex));
+    }
+
+    return <>{parts}</>;
+  };
+
+  // Custom renderers for ReactMarkdown
+  const components = {
+    // Handle inline text
+    p: ({ children, ...props }: any) => {
+      const processedChildren = React.Children.map(children, (child) => {
+        if (typeof child === 'string') {
+          return <TextWithCitations>{child}</TextWithCitations>;
+        }
+        return child;
+      });
+      return <p {...props}>{processedChildren}</p>;
+    },
+    // Handle text in list items
+    li: ({ children, ...props }: any) => {
+      const processedChildren = React.Children.map(children, (child) => {
+        if (typeof child === 'string') {
+          return <TextWithCitations>{child}</TextWithCitations>;
+        }
+        return child;
+      });
+      return <li {...props}>{processedChildren}</li>;
+    },
+    // Handle strong/bold text
+    strong: ({ children, ...props }: any) => {
+      const processedChildren = React.Children.map(children, (child) => {
+        if (typeof child === 'string') {
+          return <TextWithCitations>{child}</TextWithCitations>;
+        }
+        return child;
+      });
+      return <strong {...props}>{processedChildren}</strong>;
+    },
+    // Handle em/italic text
+    em: ({ children, ...props }: any) => {
+      const processedChildren = React.Children.map(children, (child) => {
+        if (typeof child === 'string') {
+          return <TextWithCitations>{child}</TextWithCitations>;
+        }
+        return child;
+      });
+      return <em {...props}>{processedChildren}</em>;
+    },
+  };
 
   return (
     <VStack gap='0' align='stretch' flex='1' overflowY='auto'>
@@ -68,7 +150,7 @@ export function ChatMessages() {
                 }}
               >
                 <Box fontSize='md' color='fg' lineHeight='1.7'>
-                  <ReactMarkdown>{message.content}</ReactMarkdown>
+                  <ReactMarkdown components={components}>{message.content}</ReactMarkdown>
                 </Box>
               </Box>
             ) : (
@@ -121,7 +203,7 @@ export function ChatMessages() {
                       }
                     }}
                   >
-                    <ReactMarkdown>{message.content}</ReactMarkdown>
+                    <ReactMarkdown components={components}>{message.content}</ReactMarkdown>
                   </Box>
                 )}
                 
