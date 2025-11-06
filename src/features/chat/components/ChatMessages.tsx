@@ -62,22 +62,36 @@ export function ChatMessages() {
   };
 
   // Custom component to render text with citations
-  const TextWithCitations = ({ children }: { children: string }) => {
+  const TextWithCitations = ({ children, messageId }: { children: string; messageId?: string }) => {
     const citationRegex = /\[(\d+)\]/g;
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
     let match;
+
+    // Find the message to get sources
+    const currentMessage = messageId ? messages.find(m => m.id === messageId) : null;
 
     while ((match = citationRegex.exec(children)) !== null) {
       // Add text before citation
       if (match.index > lastIndex) {
         parts.push(children.substring(lastIndex, match.index));
       }
-      // Add citation badge
+      
+      // Find snippet for this citation
+      const citationId = match[1];
+      let snippet: string | undefined;
+      
+      if (currentMessage?.sources) {
+        const source = currentMessage.sources.find(s => s.id === citationId);
+        snippet = source?.snippet;
+      }
+      
+      // Add citation badge with snippet
       parts.push(
         <CitationBadge
           key={`citation-${match[1]}-${match.index}`}
           citationId={parseInt(match[1])}
+          snippet={snippet}
           onClick={handleCitationClick}
         />
       );
@@ -138,7 +152,52 @@ export function ChatMessages() {
 
   return (
     <VStack gap='0' align='stretch' flex='1' overflowY='auto'>
-      {messages.map((message) => (
+      {messages.map((message) => {
+        // Create custom renderers with access to current message
+        const createComponents = (currentMessageId: string) => ({
+          // Handle inline text
+          p: ({ children, ...props }: any) => {
+            const processedChildren = React.Children.map(children, (child) => {
+              if (typeof child === 'string') {
+                return <TextWithCitations messageId={currentMessageId}>{child}</TextWithCitations>;
+              }
+              return child;
+            });
+            return <p {...props}>{processedChildren}</p>;
+          },
+          // Handle text in list items
+          li: ({ children, ...props }: any) => {
+            const processedChildren = React.Children.map(children, (child) => {
+              if (typeof child === 'string') {
+                return <TextWithCitations messageId={currentMessageId}>{child}</TextWithCitations>;
+              }
+              return child;
+            });
+            return <li {...props}>{processedChildren}</li>;
+          },
+          // Handle strong/bold text
+          strong: ({ children, ...props }: any) => {
+            const processedChildren = React.Children.map(children, (child) => {
+              if (typeof child === 'string') {
+                return <TextWithCitations messageId={currentMessageId}>{child}</TextWithCitations>;
+              }
+              return child;
+            });
+            return <strong {...props}>{processedChildren}</strong>;
+          },
+          // Handle em/italic text
+          em: ({ children, ...props }: any) => {
+            const processedChildren = React.Children.map(children, (child) => {
+              if (typeof child === 'string') {
+                return <TextWithCitations messageId={currentMessageId}>{child}</TextWithCitations>;
+              }
+              return child;
+            });
+            return <em {...props}>{processedChildren}</em>;
+          },
+        });
+
+        return (
         <Box 
           key={message.id} 
           py='8'
@@ -229,7 +288,7 @@ export function ChatMessages() {
                       }
                     }}
                   >
-                    <ReactMarkdown components={components}>{message.content}</ReactMarkdown>
+                    <ReactMarkdown components={createComponents(message.id)}>{message.content}</ReactMarkdown>
                   </Box>
                 )}
                 
@@ -268,7 +327,8 @@ export function ChatMessages() {
             )}
           </Flex>
         </Box>
-      ))}
+        );
+      })}
       <div ref={messagesEndRef} />
     </VStack>
   );
