@@ -18,9 +18,11 @@ function AppContent() {
   };
 
   return (
-    <Flex minH='100dvh'>
+    <Flex h='100vh' overflow='hidden'>
       <Sidebar />
-      {renderView()}
+      <Flex flex='1' overflow='hidden'>
+        {renderView()}
+      </Flex>
     </Flex>
   );
 }

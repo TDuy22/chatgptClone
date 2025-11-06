@@ -9,15 +9,15 @@
         {
           "id": "1",
           "fileName": "42321400.pdf",
-          "pageNumber": 4,
-          "fileUrl": "public/data/42321400.pdf",
+          "pageNumber": 3,
+          "fileUrl": "data/42321400.pdf",
           "snippet": "Để đảm bảo tính chính xác, mỗi câu trả lời phải được liên kết với metadata... bao gồm tên file và số trang cụ thể."
         },
         {
           "id": "2",
           "fileName": "42321400.pdf",
           "pageNumber": 2,
-          "fileUrl": "public/data42321400.pdf",
+          "fileUrl": "data/42321400.pdf",
           "snippet": "Tính năng 'Click-to-Source': Cho phép người dùng bấm vào trích dẫn [id] để mở file nguồn tại đúng trang [page]."
         }
       ]
@@ -42,7 +42,7 @@
           "id": "3",
           "fileName": "TKDE.2006.150.pdf",
           "pageNumber": 8,
-          "fileUrl": "public/data/TKDE.2006.150.pdf",
+          "fileUrl": "data/TKDE.2006.150.pdf",
           "snippet": "Regex có thể được sử dụng để trích xuất các ID trích dẫn (ví dụ: /\\[(\\d+)\\]/g) từ chuỗi văn bản trả về."
         }
       ]
@@ -59,7 +59,7 @@
           "id": "4",
           "fileName": "TKDE.2006.150.pdf",
           "pageNumber": 1,
-          "fileUrl": "public/data/TKDE.2006.150.pdf",
+          "fileUrl": "data/TKDE.2006.150.pdf",
           "snippet": "Nếu một ID trích dẫn trong 'answer' không có mục 'source' tương ứng, hãy vô hiệu hóa liên kết đó."
         }
       ]

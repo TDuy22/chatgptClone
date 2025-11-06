@@ -14,24 +14,26 @@ function ChatViewContent() {
   if (!hasMessages) {
     // Initial state: input centered
     return (
-      <>
-        <Box flex='1'>
+      <Flex h='100vh' overflow='hidden' w='full'>
+        <Box flex='1' transition='all 0.3s ease-in-out'>
           <Flex direction='column' h='full'>
             <TopSection />
             <MiddleSection />
             <BottomSection />
           </Flex>
         </Box>
-        <PDFViewer source={selectedSource} onClose={() => setSelectedSource(null)} />
-      </>
+        {selectedSource && (
+          <PDFViewer source={selectedSource} onClose={() => setSelectedSource(null)} />
+        )}
+      </Flex>
     );
   }
 
   // After first message: show messages and input at bottom
   return (
-    <>
-      <Box flex='1'>
-        <Flex direction='column' h='100vh'>
+    <Flex h='100vh' overflow='hidden' w='full'>
+      <Box flex='1' minW='0' transition='all 0.3s ease-in-out'>
+        <Flex direction='column' h='full'>
           <TopSection />
           <Box flex='1' overflowY='auto'>
             <ChatMessages />
@@ -40,8 +42,10 @@ function ChatViewContent() {
           <BottomSection />
         </Flex>
       </Box>
-      <PDFViewer source={selectedSource} onClose={() => setSelectedSource(null)} />
-    </>
+      {selectedSource && (
+        <PDFViewer source={selectedSource} onClose={() => setSelectedSource(null)} />
+      )}
+    </Flex>
   );
 }
 

@@ -14,18 +14,33 @@ export function PDFViewer({ source, onClose }: PDFViewerProps) {
     return null;
   }
 
+  // Construct PDF URL with page parameter
+  // Using nameddest or page fragment identifier
+  const pdfUrl = `/${source.fileUrl}#page=${source.pageNumber}&view=FitH`;
+  console.log('📄 PDF URL:', pdfUrl);
+
   return (
     <Box
-      position='fixed'
-      right='0'
-      top='0'
-      bottom='0'
       w='600px'
+      h='100vh'
       bg='gray.900'
       borderLeft='1px solid'
       borderColor='rgba(255, 255, 255, 0.1)'
-      zIndex='1000'
       boxShadow='dark-lg'
+      flexShrink='0'
+      animation='slideIn 0.3s ease-in-out'
+      css={{
+        '@keyframes slideIn': {
+          from: {
+            transform: 'translateX(100%)',
+            opacity: 0,
+          },
+          to: {
+            transform: 'translateX(0)',
+            opacity: 1,
+          },
+        },
+      }}
     >
       <VStack align='stretch' h='full' gap='0'>
         {/* Header */}
@@ -66,6 +81,7 @@ export function PDFViewer({ source, onClose }: PDFViewerProps) {
             borderRadius='md'
             borderLeft='4px solid'
             borderColor='blue.500'
+            mb='4'
           >
             <Text fontSize='xs' color='fg.muted' mb='2' fontWeight='semibold'>
               RELEVANT EXCERPT
@@ -75,17 +91,24 @@ export function PDFViewer({ source, onClose }: PDFViewerProps) {
             </Text>
           </Box>
 
-          {/* PDF Viewer Placeholder */}
-          <Box mt='4' p='6' bg='rgba(255, 255, 255, 0.02)' borderRadius='md' textAlign='center'>
-            <Text fontSize='sm' color='fg.muted'>
-              PDF Viewer will be integrated here
-            </Text>
-            <Text fontSize='xs' color='fg.muted' mt='2'>
-              File: {source.fileUrl}
-            </Text>
-            <Text fontSize='xs' color='fg.muted'>
-              Page: {source.pageNumber}
-            </Text>
+          {/* PDF Viewer */}
+          <Box 
+            bg='rgba(255, 255, 255, 0.02)' 
+            borderRadius='md' 
+            overflow='hidden'
+            h='calc(100vh - 250px)'
+          >
+            <iframe
+              key={`${source.id}-${source.pageNumber}`}
+              src={pdfUrl}
+              width='100%'
+              height='100%'
+              style={{
+                border: 'none',
+                display: 'block',
+              }}
+              title={`${source.fileName} - Page ${source.pageNumber}`}
+            />
           </Box>
         </Box>
       </VStack>
