@@ -4,9 +4,16 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { NewChatIcon, SidebarIcon } from '@/features/sidebar/icons/sidebar-icons';
 import { useSidebarContext } from '@/features/sidebar/context/SidebarContext';
 import { ChatGPTMenu } from '@/features/sidebar/components/ChatGPTMenu';
+import { useAppContext } from '@/contexts/AppContext';
 
 export function TopSection() {
   const { sideBarVisible, toggleSidebar } = useSidebarContext();
+  const { addChatHistory, setCurrentView } = useAppContext();
+
+  const handleNewChat = () => {
+    addChatHistory();
+    setCurrentView('chat');
+  };
   return (
     <Flex justify='space-between' align='center' p='2'>
       {!sideBarVisible && (
@@ -22,7 +29,7 @@ export function TopSection() {
           </Tooltip>
 
           <Tooltip content='New chat' showArrow>
-            <IconButton variant='ghost'>
+            <IconButton variant='ghost' onClick={handleNewChat}>
               <NewChatIcon fontSize='2xl' color='fg.muted' />
             </IconButton>
           </Tooltip>

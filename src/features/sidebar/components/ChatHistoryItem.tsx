@@ -25,7 +25,7 @@ export function ChatHistoryItem({ chatHistory }: ChatHistoryItemProps) {
         layerStyle: 'fill.muted',
       }}
       px='3'
-      py='2'
+      h='10'
       borderRadius='lg'
       w='100%'
       cursor='pointer'

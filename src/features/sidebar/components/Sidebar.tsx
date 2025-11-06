@@ -1,11 +1,9 @@
 import {
-  AbsoluteCenter,
   Box,
   Circle,
   Flex,
   HStack,
   IconButton,
-  Link,
   Stack,
   Text,
 } from '@chakra-ui/react';
@@ -15,7 +13,6 @@ import {
   DatabaseIcon,
   NewChatIcon,
   SidebarIcon,
-  SmallGPTIcon,
 } from '../icons/sidebar-icons';
 
 import { useSidebarContext } from '../context/SidebarContext';
@@ -51,7 +48,7 @@ export function Sidebar() {
 
           <Tooltip content='New chat' showArrow>
             <IconButton variant='ghost' onClick={handleNewChat}>
-              <NewChatIcon fontSize='2xl' color='fg.muted' />
+              <NewChatIcon fontSize='3xl' color='fg.muted' />
             </IconButton>
           </Tooltip>
         </Flex>
@@ -64,40 +61,18 @@ export function Sidebar() {
               layerStyle: 'fill.muted',
               textDecor: 'none',
             }}
-            px='1'
+            px='3'
             h='10'
             borderRadius='lg'
             w='100%'
             whiteSpace='nowrap'
             cursor='pointer'
-            onClick={() => setCurrentView('chat')}
-            bg={currentView === 'chat' ? 'bg.emphasized' : 'transparent'}
+            onClick={handleNewChat}
+            bg='transparent'
           >
-            <Link variant='plain' _hover={{ textDecor: 'none' }}>
-              <Text fontSize='sm' fontWeight='md'>
-                New chat
-              </Text>
-            </Link>
-            <AbsoluteCenter
-              axis='vertical'
-              right='2'
-              display='none'
-              _groupHover={{ display: 'initial' }}
-            >
-              <Tooltip
-                content='New chat'
-                positioning={{ placement: 'right' }}
-                showArrow
-              >
-                <NewChatIcon
-                  fontSize='md'
-                  color='fg.subtle'
-                  _hover={{ color: 'fg.muted' }}
-                  onClick={handleNewChat}
-                  cursor='pointer'
-                />
-              </Tooltip>
-            </AbsoluteCenter>
+            <Text fontSize='sm' fontWeight='md'>
+              New chat
+            </Text>
           </HStack>
 
           <ChatHistoryList />
