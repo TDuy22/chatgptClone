@@ -62,7 +62,7 @@ export function SharedChatInput({ value: externalValue, onValueChange }: SharedC
       
       addMessage(content || 'Response', 'assistant', sources, blocks);
       setIsLoading(false);
-    }, 500);
+    }, 3000);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

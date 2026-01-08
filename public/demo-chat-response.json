@@ -1,6 +1,6 @@
 [
   {
-  "messageId": "msg_bot_coc_vang",
+  "messageId": "msg_bot_1",
   "sender": "bot",
   "timestamp": "2025-11-07T00:25:00Z",
   "content": {
@@ -13,149 +13,195 @@
     "sources": [
       {
         "id": "1",
-        "fileName": "Quy-che-khen-thuong-FPT.pdf",
-        "pageNumber": 1,
-        "fileUrl": "data/Quy-che-khen-thuong-FPT.pdf",
-        "snippet": "Phụ lục về Quy chế khen thưởng cuối học kỳ dành cho sinh viên, Trường Đại học FPT."
+        "fileName": "QĐ 302 ĐHFPT Sửa đổi quy chế khen thưởng cuối học kỳ dành cho sinh viên.pdf",
+        "pageNumber": 3,
+        "fileUrl": "Demo Data/QĐ 302 ĐHFPT Sửa đổi quy chế khen thưởng cuối học kỳ dành cho sinh viên.pdf",
+        "snippet": "QĐ 302 ĐHFPT Sửa đổi quy chế khen thưởng cuối học kỳ dành cho sinh viên.pdf"
       }
     ]
   }
 },
   {
-    "messageId": "msg_bot_1",
+    "messageId": "msg_bot_2",
     "sender": "bot",
     "timestamp": "2025-11-06T17:50:00Z",
     "content": {
       "blocks": [
         {
           "type": "markdown",
-          "body": "Chào bạn, đây là tóm tắt nhanh về các 'feature flags' đang hoạt động [1]:"
+          "body": "Dựa theo phụ lục **lỗi vi phạm và khung xử lý** trong quyết định về việc ban hành Nội quy Ký túc xá cơ sở Hoà Lạc [2] của Đại Học FPT các lỗi vi phạm sau sẽ bị phạt tiền:"
         },
         {
           "type": "table",
           "data": {
             "headers": [
-              { "key": "flagName", "title": "Tên cờ (Flag)" },
-              { "key": "status", "title": "Trạng thái" },
-              { "key": "rollout", "title": "Tỷ lệ (%)" }
+              { "key": "tt", "title": "TT" },
+              { "key": "noiDung", "title": "Nội dung" },
+              { "key": "mucPhat", "title": "Mức phạt tiền" },
+              { "key": "hinhThucXuLy", "title": "Hình thức xử lý vi phạm" }
             ],
             "rows": [
-              { "flagName": "new-dashboard-ui", "status": "Active", "rollout": "50%" },
-              { "flagName": "payment-gateway-v2", "status": "Testing [2]", "rollout": "10%" }
+              {
+                "tt": "1",
+                "noiDung": "Mang vật dụng không có trong danh mục được phép mang vào KTX",
+                "mucPhat": "500,000 VND",
+                "hinhThucXuLy": "• Tịch thu các vật dụng trái phép."
+              },
+              {
+                "tt": "2",
+                "noiDung": "Nấu ăn trong Ký túc xá",
+                "mucPhat": "500,000 VND",
+                "hinhThucXuLy": "• Lần 1: Phạt hành chính theo Phụ lục này.\n• Lần 2: Ngừng cung cấp dịch vụ KTX."
+              },
+              {
+                "tt": "3",
+                "noiDung": "Phơi đồ trên lan can ban công",
+                "mucPhat": "100,000 VND",
+                "hinhThucXuLy": "• Lần 1: Nhắc nhở.\n• Lần 2: Phạt hành chính.\n• Lần 3: Ngừng cung cấp dịch vụ KTX."
+              },
+              {
+                "tt": "4",
+                "noiDung": "Đổ rác và xả rác sai quy định",
+                "mucPhat": "100,000 VND",
+                "hinhThucXuLy": "• Tái vi phạm phạt gấp đôi."
+              },
+              {
+                "tt": "5",
+                "noiDung": "Không hoàn thành trách nhiệm vệ sinh nội vụ và môi trường khi được phân công.\nThời điểm hoàn thành vệ sinh:\n• Nội vụ 9:00",
+                "mucPhat": "200,000 VND",
+                "hinhThucXuLy": "• Lần 1: Phạt hành chính.\n• Lần 2: Phạt hành chính và cắt điện cho tới khi thực hiện đúng nội quy.\n• Lần 3: Ngừng cung cấp dịch vụ KTX với cả phòng vi phạm."
+              },
+              {
+                "tt": "6",
+                "noiDung": "Mang thú nuôi vào phòng ở",
+                "mucPhat": "500,000 VND",
+                "hinhThucXuLy": "• Lần 1: Phạt hành chính.\n• Lần 2: Ngừng cung cấp dịch vụ KTX."
+              },
+              {
+                "tt": "7",
+                "noiDung": "Đánh bạc dưới mọi hình thức (Chưa đến mức truy tố trước pháp luật)",
+                "mucPhat": "500,000 VND",
+                "hinhThucXuLy": "• Lần 1: Phạt 500,000VND/01 người tham gia; Thông báo về gia đình.\n• Lần 2: Ngừng cung cấp dịch vụ KTX."
+              },
+              {
+                "tt": "8",
+                "noiDung": "Viết, vẽ, dán giấy, đóng đinh lên giường, tường, cửa, tủ...",
+                "mucPhat": "200,000 VND",
+                "hinhThucXuLy": "• Cộng thêm giá trị sửa chữa, khắc phục."
+              },
+              {
+                "tt": "9",
+                "noiDung": "Làm ồn, ảnh hưởng tới người khác.",
+                "mucPhat": "200,000 VND/Người",
+                "hinhThucXuLy": "• Cắt điện hoặc nước phòng ở cho tới khi thực hiện đúng nội quy."
+              },
+              {
+                "tt": "10",
+                "noiDung": "Sang phòng người khác sau 22:30",
+                "mucPhat": "500,000 VND/Người",
+                "hinhThucXuLy": "• Lần 1: Nhắc nhở.\n• Lần 2: Phạt hành chính.\n• Lần 3: Ngừng cung cấp dịch vụ KTX."
+              },
+              {
+                "tt": "11",
+                "noiDung": "Chứa chấp người từ phòng khác sang sau 22:30",
+                "mucPhat": "500,000 VND/Người",
+                "hinhThucXuLy": "• Lần 1: Nhắc nhở.\n• Lần 2: Phạt hành chính.\n• Lần 3: Ngừng cung cấp dịch vụ KTX cho cả phòng."
+              },
+              {
+                "tt": "12",
+                "noiDung": "Tự ý dời chỗ ở",
+                "mucPhat": "1,000,000 VND",
+                "hinhThucXuLy": "• Lần 1: Phạt hành chính và yêu cầu về chỗ cũ ngay lập tức.\n• Lần 2: Ngừng cung cấp dịch vụ KTX."
+              },
+              {
+                "tt": "13",
+                "noiDung": "Tự ý đưa người ngoài (không đăng ký ở KTX) vào phòng sau 22:30",
+                "mucPhat": "1,000,000 VND",
+                "hinhThucXuLy": "• Lần 1: Phạt hành chính người chứa chấp yêu cầu người ngoài rời khỏi KTX ngay lập tức.\n• Lần 2: Ngừng cung cấp dịch vụ KTX."
+              },
+              {
+                "tt": "14",
+                "noiDung": "Sinh viên ở mà không đăng ký",
+                "mucPhat": "1,000,000 VND",
+                "hinhThucXuLy": "• Phạt hành chính và tiền ở đến ngày vi phạm."
+              },
+              {
+                "tt": "15",
+                "noiDung": "Sinh viên làm check-out muộn (sau ngày 30 của tháng cuối cùng trong học kỳ)",
+                "mucPhat": "100% tiền ở kỳ sau",
+                "hinhThucXuLy": "• Phạt hành chính (Không bao gồm định mức điện, nước và tính theo đơn giá phòng ở)."
+              },
+              {
+                "tt": "16",
+                "noiDung": "Tàng trữ, buôn bán, sử dụng đồ uống có cồn, thuốc lá, thuốc lào, hoặc trong tình trạng say rượu – bia mất kiểm soát",
+                "mucPhat": "500,000 VND",
+                "hinhThucXuLy": "• Lần 1: Phạt hành chính, khiển trách.\n• Lần 2: Ngừng cung cấp dịch vụ KTX."
+              },
+              {
+                "tt": "17",
+                "noiDung": "Gây gổ, đánh nhau gây mất trật tự an ninh KTX",
+                "mucPhat": "500,000 VND",
+                "hinhThucXuLy": "• Lần 1: Phạt hành chính, khiển trách.\n• Lần 2: Ngừng cung cấp dịch vụ KTX."
+              },
+              {
+                "tt": "18",
+                "noiDung": "Để rác gây tắc nghẽn (bồn cầu, chậu rửa, thoát sàn)",
+                "mucPhat": "500,000 VND",
+                "hinhThucXuLy": "• Cộng thêm giá trị sửa chữa."
+              },
+              {
+                "tt": "19",
+                "noiDung": "Lấn chiếm diện tích chung, giường, tủ trống trong phòng",
+                "mucPhat": "200,000 VND",
+                "hinhThucXuLy": "• Lần 1: Nhắc nhở.\n• Lần 2: Phạt hành chính.\n• Lần 3: Ngừng cung cấp dịch vụ KTX."
+              },
+              {
+                "tt": "20",
+                "noiDung": "Để xe trong phòng, sảnh sinh hoạt chung, gầm Dom",
+                "mucPhat": "200,000 VND",
+                "hinhThucXuLy": "• Phải để xe ra nhà xe."
+              },
+              {
+                "tt": "21",
+                "noiDung": "Sử dụng điện, nước, mặt bằng vào mục đích chế biến sản xuất kinh doanh",
+                "mucPhat": "500,000 VND",
+                "hinhThucXuLy": "• Lần 1: Phạt hành chính và tịch thu thiết bị, dụng cụ phục vụ kinh doanh.\n• Lần 2: Ngừng cung cấp dịch vụ KTX."
+              }
             ]
           }
         }
       ],
       "sources": [
         {
-          "id": "1",
-          "fileName": "42321400.pdf",
-          "pageNumber": 3,
-          "fileUrl": "data/42321400.pdf",
-          "snippet": "Để đảm bảo tính chính xác, mỗi câu trả lời phải được liên kết với metadata... bao gồm tên file và số trang cụ thể."
-        },
-        {
           "id": "2",
-          "fileName": "42321400.pdf",
-          "pageNumber": 2,
-          "fileUrl": "data/42321400.pdf",
-          "snippet": "Tính năng 'Click-to-Source': Cho phép người dùng bấm vào trích dẫn [id] để mở file nguồn tại đúng trang [page]."
+          "fileName": "Qd-894-ban-hanh-Noi-quy-Ky-tuc-xa-cs-Hoa-Lac-1.pdf",
+          "pageNumber": 6,
+          "fileUrl": "Demo Data/Qd-894-ban-hanh-Noi-quy-Ky-tuc-xa-cs-Hoa-Lac-1.pdf",
+          "snippet": "Qd-894-ban-hanh-Noi-quy-Ky-tuc-xa-cs-Hoa-Lac-1.pdf"
         }
       ]
     }
-  },
+},
   {
-    "messageId": "msg_bot_2",
+    "messageId": "msg_bot_3",
     "sender": "bot",
     "timestamp": "2025-11-06T17:51:15Z",
     "content": {
       "blocks": [
         {
           "type": "markdown",
-          "body": "Như đã trao đổi, đây là bảng so sánh về Kafka và RabbitMQ:"
-        },
-        {
-          "type": "table",
-          "data": {
-            "headers": [
-              { "key": "feature", "title": "Đặc điểm" },
-              { "key": "kafka", "title": "Apache Kafka" },
-              { "key": "rabbitmq", "title": "RabbitMQ" }
-            ],
-            "rows": [
-              { "feature": "Mô hình chính", "kafka": "Publish/Subscribe (dựa trên log) [3]", "rabbitmq": "Routing, Queuing [4]" },
-              { "feature": "Thông lượng", "kafka": "Rất cao (Streaming)", "rabbitmq": "Cao (Task queuing)" }
-            ]
-          }
-        },
-        {
-          "type": "markdown",
-          "body": "Hãy chú ý đến sự khác biệt về mô hình lưu trữ của chúng."
+          "body": "Dựa theo tài liệu *Session 7 ChuÌoÌng 2 HaÌng hoÌa, thiÌ£ truÌoÌÌng vaÌ vai troÌ cuÌa caÌc chuÌ theÌÌ tham gia thiÌ£ truÌoÌÌng* [3] 'người sản xuất' được định nghĩa như sau:\n\nNhững người sản xuất và cung cấp hàng hóa, dịch vụ thị trường nhằm đáp ứng nhu cầu tiêu dùng của xã hội. Người sản xuất bao gồm các nhà sản xuất, đầu tư, kinh doanh hàng hóa, dịch vụ… Họ là những người trực tiếp tạo ra của cái vất chất, sản phẩm cho xã hội để phục vụ người tiêu dùng"
         }
       ],
       "sources": [
         {
           "id": "3",
-          "fileName": "TKDE.2006.150.pdf",
-          "pageNumber": 8,
-          "fileUrl": "data/TKDE.2006.150.pdf",
-          "snippet": "Regex có thể được sử dụng để trích xuất các ID trích dẫn (ví dụ: /\\[(\\d+)\\]/g) từ chuỗi văn bản trả về."
-        },
-                {
-          "id": "4",
-          "fileName": "TKDE.2006.150.pdf",
-          "pageNumber": 2,
-          "fileUrl": "data/TKDE.2006.150.pdf",
-          "snippet": "Regex có thể được sử dụng để trích xuất các ID trích dẫn (ví dụ: /\\[(\\d+)\\]/g) từ chuỗi văn bản trả về."
+          "fileName": "Session 7 ChuÌoÌng 2 HaÌng hoÌa, thiÌ£ truÌoÌÌng vaÌ vai troÌ cuÌa caÌc chuÌ theÌÌ tham gia thiÌ£ truÌoÌÌng.pptx",
+          "pageNumber": 4,
+          "fileUrl": "Demo Data/MLN122 - updated SP24/Session 7 ChuÌoÌng 2 HaÌng hoÌa, thiÌ£ truÌoÌÌng vaÌ vai troÌ cuÌa caÌc chuÌ theÌÌ tham gia thiÌ£ truÌoÌÌng.pptx",
+          "snippet": "Session 7 ChuÌoÌng 2 HaÌng hoÌa, thiÌ£ truÌoÌÌng vaÌ vai troÌ cuÌa caÌc chuÌ theÌÌ tham gia thiÌ£ truÌoÌÌng.pptx"
         }
       ]
     }
-  },
-  {
-    "messageId": "msg_bot_3",
-    "sender": "bot",
-    "timestamp": "2025-11-06T17:52:30Z",
-    "content": {
-      "blocks": [
-        {
-          "type": "markdown",
-          "body": "Về các mã lỗi bạn hỏi, đây là thông tin chi tiết từ tài liệu [5]:"
-        },
-        {
-          "type": "table",
-          "data": {
-            "headers": [
-              { "key": "code", "title": "Mã lỗi" },
-              { "key": "description", "title": "Mô tả" },
-              { "key": "action", "title": "Hành động" }
-            ],
-            "rows": [
-              { "code": "E-404", "description": "Không tìm thấy tài nguyên", "action": "Kiểm tra lại ID [6]" },
-              { "code": "E-503", "description": "Dịch vụ quá tải", "action": "Thử lại sau" }
-            ]
-          }
-        },
-        {
-          "type": "markdown",
-          "body": "Bạn cần liên hệ admin nếu gặp lỗi `E-503` quá 3 lần."
-        }
-      ],
-      "sources": [
-        {
-          "id": "5",
-          "fileName": "TKDE.2006.150.pdf",
-          "pageNumber": 1,
-          "fileUrl": "data/TKDE.2006.150.pdf",
-          "snippet": "Nếu một ID trích dẫn trong 'answer' không có mục 'source' tương ứng, hãy vô hiệu hóa liên kết đó."
-        },
-                {
-          "id": "6",
-          "fileName": "TKDE.2006.150.pdf",
-          "pageNumber": 2,
-          "fileUrl": "data/TKDE.2006.150.pdf",
-          "snippet": "Nếu một ID trích dẫn trong 'answer' không có mục 'source' tương ứng, hãy vô hiệu hóa liên kết đó."
-        }
-      ]
-    }
-  }
+}
 ]
