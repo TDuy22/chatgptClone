@@ -24,7 +24,7 @@ export const InputGroup = forwardRef<HTMLDivElement, InputGroupProps>(
     return (
       <Group ref={ref} {...rest}>
         {startElement && (
-          <InputElement pointerEvents="none" {...startElementProps}>
+          <InputElement {...startElementProps} style={{ pointerEvents: 'auto', zIndex: 2 }}>
             {startElement}
           </InputElement>
         )}

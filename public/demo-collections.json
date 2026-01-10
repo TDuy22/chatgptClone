@@ -1,0 +1,32 @@
+[
+  {
+    "id": "col-articles",
+    "name": "Tài liệu Marketing",
+    "description": "Marketing assets and docs"
+  },
+  {
+    "id": "col-research",
+    "name": "Hồ sơ Kỹ thuật",
+    "description": "Technical specs and papers"
+  },
+  {
+    "id": "col-sales",
+    "name": "Sales Kits",
+    "description": "Sales presentations and one-pagers"
+  },
+  {
+    "id": "col-legal",
+    "name": "Legal",
+    "description": "Contracts, NDAs and legal templates"
+  },
+  {
+    "id": "col-hr",
+    "name": "HR Docs",
+    "description": "Policies, handbooks and forms"
+  },
+  {
+    "id": "col-ops",
+    "name": "Operations",
+    "description": "Runbooks, SOPs and process docs"
+  }
+]
