@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { AppProvider, useAppContext } from '@/contexts/AppContext';
 import { ChatView } from '@/features/chat';
-import { DataManagement } from '@/features/data-management';
+import { DataManagement } from '@/features/data-management/components/DataManagementPanel';
 import { Sidebar, SidebarProvider } from '@/features/sidebar';
 
 function AppContent() {

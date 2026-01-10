@@ -14,7 +14,10 @@ import {
 } from '@/icons/other-icons';
 import { useState } from 'react';
 import { useChatContext } from '../context/ChatContext';
-import { demoResponseService } from '@/services/demo-response-service';
+import { getChatApi } from '@/services/api/api-factory';
+import type { Citation } from '@/services/api/chat-api';
+import type { Source } from '@/services/demo-response-service';
+import { useAppContext } from '@/contexts/AppContext';
 
 interface SharedChatInputProps {
   value?: string;
@@ -24,6 +27,7 @@ interface SharedChatInputProps {
 export function SharedChatInput({ value: externalValue, onValueChange }: SharedChatInputProps) {
   const [internalValue, setInternalValue] = useState('');
   const { addMessage, setIsLoading } = useChatContext();
+  const { selectedCollection } = useAppContext();
 
   // Use external value if provided, otherwise use internal state
   const inputValue = externalValue !== undefined ? externalValue : internalValue;
@@ -41,28 +45,32 @@ export function SharedChatInput({ value: externalValue, onValueChange }: SharedC
     addMessage(message, 'user', [], undefined);
     setInputValue('');
     setIsLoading(true);
+    try {
+      const chatApi = getChatApi();
 
-    // Get response from demo JSON file
-    setTimeout(() => {
-      // Get blocks and sources together (avoid index mismatch)
-      const { blocks, sources } = demoResponseService.getNextResponseWithSources();
-      
-      console.log('📦 SharedChatInput - Response blocks COUNT:', blocks.length);
-      console.log('📦 SharedChatInput - Response blocks:', JSON.stringify(blocks, null, 2));
-      console.log('📦 SharedChatInput - Response sources COUNT:', sources.length);
-      console.log('📦 SharedChatInput - Response sources:', JSON.stringify(sources, null, 2));
-      console.log('📦 SharedChatInput - About to call addMessage with blocks and sources');
-      
-      // Add assistant message with blocks and sources
-      // For backward compatibility, we combine all markdown blocks into content
-      const content = blocks
-        .filter(b => b.type === 'markdown')
-        .map(b => (b as any).body)
-        .join('\n\n');
-      
-      addMessage(content || 'Response', 'assistant', sources, blocks);
+      // Build optional chat history (pair user/assistant). For now, we skip and let backend work stateless if needed.
+      const req = {
+        Question: message,
+        collection: selectedCollection ? { id: selectedCollection.id, name: selectedCollection.name } : undefined,
+      };
+
+      const res = await chatApi.chat(req as any);
+
+      const sources: Source[] = (res.Citation || []).map((c: Citation) => ({
+        id: c.file_id,
+        fileName: c.file_name,
+        pageNumber: 1,
+        fileUrl: c.file_link,
+        snippet: '',
+      }));
+
+      addMessage(res.Answer || 'Response', 'assistant', sources, undefined);
+    } catch (e) {
+      console.error('Chat error:', e);
+      addMessage('Xin lỗi, đã xảy ra lỗi khi xử lý yêu cầu.', 'assistant', [], undefined);
+    } finally {
       setIsLoading(false);
-    }, 3000);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

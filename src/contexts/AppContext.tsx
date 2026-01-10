@@ -13,6 +13,8 @@ interface AppContextType {
   selectChatHistory: (id: string) => void;
   updateChatHistory: (id: string, updates: Partial<ChatHistory>) => void;
   getCurrentChatHistory: () => ChatHistory | null;
+  selectedCollection: { id: string; name: string } | null;
+  setSelectedCollection: (col: { id: string; name: string } | null) => void;
 }
 
 const AppContext = createContext({} as AppContextType);
@@ -21,6 +23,7 @@ export const AppProvider = (props: { children: React.ReactNode }) => {
   const [currentView, setCurrentView] = useState<AppView>('chat');
   const [chatHistories, setChatHistories] = useState<ChatHistory[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [selectedCollection, setSelectedCollection] = useState<{ id: string; name: string } | null>(null);
 
   // Load chat histories from localStorage
   useEffect(() => {
@@ -64,6 +67,28 @@ export const AppProvider = (props: { children: React.ReactNode }) => {
       localStorage.setItem('chatHistories', JSON.stringify(chatHistories));
     }
   }, [chatHistories]);
+
+  // Load selected collection from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('selectedCollection');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.id && parsed.name) {
+          setSelectedCollection(parsed);
+        }
+      } catch {}
+    }
+  }, []);
+
+  // Persist selected collection
+  useEffect(() => {
+    if (selectedCollection) {
+      localStorage.setItem('selectedCollection', JSON.stringify(selectedCollection));
+    } else {
+      localStorage.removeItem('selectedCollection');
+    }
+  }, [selectedCollection]);
 
   const addChatHistory = (): string => {
     const newChat: ChatHistory = {
@@ -127,6 +152,8 @@ export const AppProvider = (props: { children: React.ReactNode }) => {
         selectChatHistory,
         updateChatHistory,
         getCurrentChatHistory,
+        selectedCollection,
+        setSelectedCollection,
       }}
     >
       {props.children}
