@@ -53,12 +53,14 @@ export class RealDataApi implements DataApi {
       // hoặc: [{ id: "1", name: "col1", createdAt: "..." }]
       
       if (Array.isArray(data)) {
-        return data.map((item: string | { id?: string; name: string; createdAt?: string }, index: number) => {
+        return data.map((item: string | { id?: string; name: string; createdAt?: string }) => {
           if (typeof item === 'string') {
-            return { id: `col_${index}`, name: item, createdAt: new Date().toISOString() };
+            // name làm id luôn
+            return { id: item, name: item, createdAt: new Date().toISOString() };
           }
+          // Dùng name làm id nếu backend không trả về id
           return {
-            id: item.id || `col_${index}`,
+            id: item.name,  // Dùng name làm id
             name: item.name,
             createdAt: item.createdAt || new Date().toISOString(),
           };
@@ -99,11 +101,11 @@ export class RealDataApi implements DataApi {
       console.log('✅ Collection created:', data);
       
       // Backend trả về { status: "success" }
-      // Frontend tạo Collection object với thông tin cần thiết
+      // Frontend tạo Collection object - dùng name làm id
       const newCollection: Collection = {
-        id: data.id || `col_${Date.now()}`,
-        name: data.name || name,
-        createdAt: data.createdAt || new Date().toISOString(),
+        id: name,  // Dùng name làm id
+        name: name,
+        createdAt: new Date().toISOString(),
       };
       
       // Lưu vào localStorage để sync
@@ -122,10 +124,8 @@ export class RealDataApi implements DataApi {
    */
   async getFiles(collectionId: string): Promise<FileItem[]> {
     try {
-      // Tìm collection name từ id
-      const collections = await this.getCollections();
-      const collection = collections.find(c => c.id === collectionId);
-      const collectionName = collection?.name || collectionId;
+      // collectionId bây giờ chính là name
+      const collectionName = collectionId;
 
       // Build URL with query parameter: /collections_info?name=collection_name
       const url = `${this.baseURL}${API_CONFIG.ENDPOINTS.COLLECTION_INFO}?name=${encodeURIComponent(collectionName)}`;
@@ -193,15 +193,22 @@ export class RealDataApi implements DataApi {
   async uploadFiles(params: UploadFilesParams): Promise<UploadFilesResult> {
     const { files, collectionId, collectionName } = params;
 
-    // Get or create collection
+    // Get or create collection - collectionId bây giờ chính là name
     let collection: Collection;
     if (collectionId) {
+      // collectionId chính là name, tìm theo name
       const collections = await this.getCollections();
-      const found = collections.find(c => c.id === collectionId);
+      const found = collections.find(c => c.name === collectionId || c.name.toLowerCase() === collectionId.toLowerCase());
       if (!found) {
-        throw new Error(`Collection not found: ${collectionId}`);
+        // Nếu không tìm thấy, tạo collection object từ collectionId (name)
+        collection = {
+          id: collectionId,
+          name: collectionId,
+          createdAt: new Date().toISOString(),
+        };
+      } else {
+        collection = found;
       }
-      collection = found;
     } else if (collectionName) {
       collection = await this.createCollection(collectionName);
     } else {
@@ -283,7 +290,7 @@ export class RealDataApi implements DataApi {
     if (existing) return existing;
 
     const newCollection: Collection = {
-      id: `col_${Date.now()}`,
+      id: name,  // Dùng name làm id
       name,
       createdAt: new Date().toISOString(),
     };
