@@ -23,7 +23,7 @@ import {
   EnterIcon,
   UploadIcon,
 } from '@/icons/other-icons';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useChatContext } from '../context/ChatContext';
 import { getChatApi, getDataApi } from '@/services/api/api-factory';
 import type { Citation } from '@/services/api/chat-api';
@@ -42,8 +42,11 @@ export function SharedChatInput({ value: externalValue, onValueChange }: SharedC
   const [collections, setCollections] = useState<Collection[]>([]);
   const [isLoadingCollections, setIsLoadingCollections] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const { addMessage, setIsLoading } = useChatContext();
+  const { addMessage, setIsLoading, isLoading } = useChatContext();
   const { selectedCollections, toggleCollection, clearSelectedCollections } = useAppContext();
+  
+  // Ref to prevent double submission (more reliable than state)
+  const isSubmittingRef = useRef(false);
 
   // Use external value if provided, otherwise use internal state
   const inputValue = externalValue !== undefined ? externalValue : internalValue;
@@ -79,23 +82,30 @@ export function SharedChatInput({ value: externalValue, onValueChange }: SharedC
 
   const handleSendMessage = async () => {
     const message = inputValue.trim();
-    if (message === '') return;
+    // Prevent double submission using both state and ref
+    if (message === '' || isLoading || isSubmittingRef.current) return;
 
-    // Add user message (user messages don't have sources or blocks)
-    addMessage(message, 'user', [], undefined);
+    // Mark as submitting immediately (ref is synchronous)
+    isSubmittingRef.current = true;
+    
+    // Clear input first to prevent double submission
+    const savedMessage = message; // Save message before clearing
     setInputValue('');
     setIsLoading(true);
+    
+    // Add user message (user messages don't have sources or blocks)
+    addMessage(savedMessage, 'user', [], undefined);
     try {
       const chatApi = getChatApi();
 
       // Build request with collection_names (comma-separated for multiple)
       const collectionNames = selectedCollections.map(c => c.name);
       const req = {
-        Question: message,
+        Question: savedMessage,
         // Nếu có nhiều collections, gửi tên collections
         collection: selectedCollections.length > 0 
           ? { 
-              id: selectedCollections.map(c => c.id).join(','),
+              id: selectedCollections.map(c => c.name).join(','), // Use name as id
               name: collectionNames.join(',')  // Backend có thể parse bằng split(',')
             } 
           : undefined,
@@ -137,6 +147,7 @@ export function SharedChatInput({ value: externalValue, onValueChange }: SharedC
       addMessage('Xin lỗi, đã xảy ra lỗi khi xử lý yêu cầu.', 'assistant', [], undefined);
     } finally {
       setIsLoading(false);
+      isSubmittingRef.current = false; // Reset ref when done
     }
   };
 
@@ -331,12 +342,12 @@ export function SharedChatInput({ value: externalValue, onValueChange }: SharedC
           <IconButton
             size='md'
             borderRadius='full'
-            disabled={inputValue.trim() === ''}
+            disabled={inputValue.trim() === '' || isLoading}
             onClick={handleSendMessage}
             aria-label='Send message'
-            bg={inputValue.trim() === '' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.2)'}
+            bg={inputValue.trim() === '' || isLoading ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.2)'}
             _hover={{
-              bg: inputValue.trim() === '' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.25)',
+              bg: inputValue.trim() === '' || isLoading ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.25)',
             }}
             _disabled={{
               opacity: 0.6,
@@ -348,7 +359,7 @@ export function SharedChatInput({ value: externalValue, onValueChange }: SharedC
         }
       >
         <Input
-          placeholder='Message Askify'
+          placeholder={isLoading ? 'Đang xử lý...' : 'Message Askify'}
           variant='subtle'
           size='xl'
           h='14'
@@ -356,6 +367,7 @@ export function SharedChatInput({ value: externalValue, onValueChange }: SharedC
           value={inputValue}
           onChange={handleInputValue}
           onKeyDown={handleKeyDown}
+          disabled={isLoading}
           borderWidth='1px'
           borderColor='rgba(255, 255, 255, 0.15)'
           _focus={{
@@ -364,6 +376,11 @@ export function SharedChatInput({ value: externalValue, onValueChange }: SharedC
           }}
           _hover={{
             borderColor: 'rgba(255, 255, 255, 0.15)',
+          }}
+          _disabled={{
+            opacity: 0.7,
+            cursor: 'not-allowed',
+            bg: 'rgba(255, 255, 255, 0.03)',
           }}
         />
       </InputGroup>
