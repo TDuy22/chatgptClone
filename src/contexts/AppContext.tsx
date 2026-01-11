@@ -25,6 +25,31 @@ export const AppProvider = (props: { children: React.ReactNode }) => {
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [selectedCollection, setSelectedCollection] = useState<{ id: string; name: string } | null>(null);
 
+  // Dev-only: auto clear mock-related localStorage on app start when running `npm run dev`.
+  // This avoids quota issues and ensures a fresh state each run.
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      try {
+        const keys = Object.keys(localStorage);
+        for (const k of keys) {
+          if (
+            k === 'mock_collections' ||
+            k === 'selectedCollection' ||
+            k.startsWith('mock_files_')
+          ) {
+            localStorage.removeItem(k);
+          }
+        }
+        // Optionally clear chat histories if explicitly requested via env
+        if (import.meta.env.VITE_CLEAR_CHAT_ON_START === 'true') {
+          localStorage.removeItem('chatHistories');
+        }
+      } catch (e) {
+        console.warn('Failed to auto-clear localStorage in dev:', e);
+      }
+    }
+  }, []);
+
   // Load chat histories from localStorage
   useEffect(() => {
     const savedHistories = localStorage.getItem('chatHistories');
