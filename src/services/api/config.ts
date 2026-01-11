@@ -1,9 +1,25 @@
 /**
  * API Configuration
  * 
- * TODO: Backend team cần cung cấp:
- * - BASE_URL: URL của backend server
- * - Các endpoint paths nếu khác với mặc định
+ * Backend team cần cung cấp các endpoints sau:
+ * 
+ * 1. QA (Hỏi đáp):
+ *    POST /qa
+ *    - Request: FormData { collection_name, question }
+ *    - Response: [{ text, file_citation }]
+ * 
+ * 2. INDEXING (Upload files):
+ *    POST /indexing
+ *    - Request: FormData { collection_name, files[] }
+ *    - Response: { success, message }
+ * 
+ * 3. COLLECTIONS (Quản lý collections):
+ *    GET  /collections          - Lấy danh sách collections
+ *    POST /collections          - Tạo collection mới
+ *    DELETE /collections/:name  - Xóa collection
+ * 
+ * 4. FILES (Quản lý files trong collection):
+ *    GET /collections/:name/files - Lấy danh sách files
  */
 
 export const API_CONFIG = {
@@ -16,6 +32,13 @@ export const API_CONFIG = {
     
     // Indexing endpoint - Upload files
     INDEXING: '/indexing',
+    
+    // Collection endpoints
+    COLLECTIONS: '/collections',           // GET: list, POST: create
+    COLLECTION_DELETE: '/collections',     // DELETE /collections/:name
+    
+    // Files endpoint
+    COLLECTION_FILES: '/collections',      // GET /collections/:name/files
   },
   
   // Timeout cho requests (ms)
