@@ -1,4 +1,5 @@
-import type { ChatApi, ChatRequest, ChatResponse, Citation } from './chat-api';
+import type { ChatApi, ChatRequest, ChatResponse, BackendAnswer } from './chat-api';
+import { transformBackendAnswers } from './chat-api';
 
 // reuse same localStorage keys as mock-data-api
 const COLLECTIONS_KEY = 'mock_collections';
@@ -20,26 +21,65 @@ function loadFiles(collectionId: string): StoredFile[] {
 
 export class MockChatApi implements ChatApi {
   async chat(req: ChatRequest): Promise<ChatResponse> {
-    // simple heuristic answer
-    const answer = req.Question?.trim()
-      ? `Bạn vừa hỏi: "${req.Question}". Đây là câu trả lời mẫu từ MockChatApi.`
-      : 'Đây là câu trả lời mẫu từ MockChatApi.';
-
-    // build citations from selected collection if available
-    const citations: Citation[] = [];
-    if (req.collection?.id || req.collection?.name) {
-      const cols = loadCollections();
-      const col = req.collection.id
-        ? cols.find((c) => c.id === req.collection!.id)
-        : cols.find((c) => c.name?.toLowerCase() === (req.collection!.name || '').toLowerCase());
-      if (col) {
-        const files = loadFiles(col.id).slice(0, 3); // include up to 3 files
-        for (const f of files) {
-          citations.push({ file_id: f.id, file_name: f.name, file_link: f.dataUrl });
-        }
+    // Simulate loading from answers.json format
+    let backendAnswers: BackendAnswer[] = [];
+    
+    try {
+      // Try to load from answers.json for demo
+      const response = await fetch('/answers.json');
+      if (response.ok) {
+        const data = await response.json();
+        // Take first 2 answers as demo response
+        backendAnswers = Array.isArray(data) ? data.slice(0, 2) : [];
       }
+    } catch (error) {
+      console.log('Using fallback response');
     }
 
-    return { Answer: answer, Citation: citations };
+    // Fallback if no answers loaded
+    if (backendAnswers.length === 0) {
+      // Build citations from selected collection if available
+      const fileCitations: string[] = [];
+      if (req.collection?.id || req.collection?.name) {
+        const cols = loadCollections();
+        const col = req.collection.id
+          ? cols.find((c) => c.id === req.collection!.id)
+          : cols.find((c) => c.name?.toLowerCase() === (req.collection!.name || '').toLowerCase());
+        if (col) {
+          const files = loadFiles(col.id).slice(0, 3);
+          fileCitations.push(...files.map(f => f.name));
+        }
+      }
+
+      backendAnswers = [
+        {
+          text: req.Question?.trim()
+            ? `### Câu trả lời cho: "${req.Question}"\n\nĐây là câu trả lời mẫu từ MockChatApi. Khi kết nối backend thật, nội dung sẽ được lấy từ hệ thống RAG.`
+            : '### Câu trả lời mẫu\n\nĐây là câu trả lời mẫu từ MockChatApi.',
+          file_citation: fileCitations
+        }
+      ];
+    }
+
+    // Transform backend format to frontend format
+    const collectionName = req.collection?.name || req.collection?.id;
+    const { blocks, sources } = transformBackendAnswers(backendAnswers, collectionName);
+
+    // Build combined answer text for backward compatibility
+    const answerText = blocks
+      .filter(b => b.type === 'markdown')
+      .map(b => (b as { type: 'markdown'; body: string }).body)
+      .join('\n\n');
+
+    return { 
+      Answer: answerText,
+      Citation: sources.map(s => ({
+        file_id: s.id,
+        file_name: s.fileName,
+        file_link: s.fileUrl
+      })),
+      blocks,
+      sources
+    };
   }
 }

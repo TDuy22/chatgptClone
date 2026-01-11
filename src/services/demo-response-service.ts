@@ -24,11 +24,13 @@ export interface TableData {
 export interface MarkdownBlock {
   type: 'markdown';
   body: string;
+  blockSources?: Source[]; // Sources specific to this block
 }
 
 export interface TableBlock {
   type: 'table';
   data: TableData;
+  blockSources?: Source[]; // Sources specific to this block
 }
 
 export type ContentBlock = MarkdownBlock | TableBlock;

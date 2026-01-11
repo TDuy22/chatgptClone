@@ -3,6 +3,11 @@ import { ChatHistory } from '@/types/chat-history';
 
 export type AppView = 'chat' | 'data-management';
 
+export interface SelectedCollection {
+  id: string;
+  name: string;
+}
+
 interface AppContextType {
   currentView: AppView;
   setCurrentView: (view: AppView) => void;
@@ -13,8 +18,14 @@ interface AppContextType {
   selectChatHistory: (id: string) => void;
   updateChatHistory: (id: string, updates: Partial<ChatHistory>) => void;
   getCurrentChatHistory: () => ChatHistory | null;
-  selectedCollection: { id: string; name: string } | null;
-  setSelectedCollection: (col: { id: string; name: string } | null) => void;
+  // Multi-select collections
+  selectedCollections: SelectedCollection[];
+  setSelectedCollections: (cols: SelectedCollection[]) => void;
+  toggleCollection: (col: SelectedCollection) => void;
+  clearSelectedCollections: () => void;
+  // Legacy single select (for backward compatibility)
+  selectedCollection: SelectedCollection | null;
+  setSelectedCollection: (col: SelectedCollection | null) => void;
 }
 
 const AppContext = createContext({} as AppContextType);
@@ -23,7 +34,7 @@ export const AppProvider = (props: { children: React.ReactNode }) => {
   const [currentView, setCurrentView] = useState<AppView>('chat');
   const [chatHistories, setChatHistories] = useState<ChatHistory[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
-  const [selectedCollection, setSelectedCollection] = useState<{ id: string; name: string } | null>(null);
+  const [selectedCollections, setSelectedCollections] = useState<SelectedCollection[]>([]);
 
   // Dev-only: auto clear mock-related localStorage on app start when running `npm run dev`.
   // This avoids quota issues and ensures a fresh state each run.
@@ -93,27 +104,54 @@ export const AppProvider = (props: { children: React.ReactNode }) => {
     }
   }, [chatHistories]);
 
-  // Load selected collection from localStorage
+  // Load selected collections from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('selectedCollection');
+    const saved = localStorage.getItem('selectedCollections');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed && parsed.id && parsed.name) {
-          setSelectedCollection(parsed);
+        if (Array.isArray(parsed)) {
+          setSelectedCollections(parsed);
         }
       } catch {}
     }
   }, []);
 
-  // Persist selected collection
+  // Persist selected collections
   useEffect(() => {
-    if (selectedCollection) {
-      localStorage.setItem('selectedCollection', JSON.stringify(selectedCollection));
+    if (selectedCollections.length > 0) {
+      localStorage.setItem('selectedCollections', JSON.stringify(selectedCollections));
     } else {
-      localStorage.removeItem('selectedCollection');
+      localStorage.removeItem('selectedCollections');
     }
-  }, [selectedCollection]);
+  }, [selectedCollections]);
+
+  // Toggle a collection in the selection
+  const toggleCollection = (col: SelectedCollection) => {
+    setSelectedCollections(prev => {
+      const exists = prev.find(c => c.id === col.id);
+      if (exists) {
+        return prev.filter(c => c.id !== col.id);
+      } else {
+        return [...prev, col];
+      }
+    });
+  };
+
+  // Clear all selected collections
+  const clearSelectedCollections = () => {
+    setSelectedCollections([]);
+  };
+
+  // Legacy: get first selected collection (backward compatibility)
+  const selectedCollection = selectedCollections.length > 0 ? selectedCollections[0] : null;
+  const setSelectedCollection = (col: SelectedCollection | null) => {
+    if (col) {
+      setSelectedCollections([col]);
+    } else {
+      setSelectedCollections([]);
+    }
+  };
 
   const addChatHistory = (): string => {
     const newChat: ChatHistory = {
@@ -177,6 +215,10 @@ export const AppProvider = (props: { children: React.ReactNode }) => {
         selectChatHistory,
         updateChatHistory,
         getCurrentChatHistory,
+        selectedCollections,
+        setSelectedCollections,
+        toggleCollection,
+        clearSelectedCollections,
         selectedCollection,
         setSelectedCollection,
       }}

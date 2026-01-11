@@ -52,6 +52,11 @@ export function StreamingText({ blocks, sources, onStreamComplete, messageId }: 
     console.warn('❌ Source not found for citation:', citationId);
   };
 
+  // Only show sources below the last block when streaming is complete
+  const shouldShowSources = (index: number) => {
+    return !isStreaming && index === displayedBlocks.length - 1;
+  };
+
   return (
     <VStack 
       align='stretch'
@@ -66,6 +71,7 @@ export function StreamingText({ blocks, sources, onStreamComplete, messageId }: 
           block={block}
           sources={sources}
           onCitationClick={handleCitationClick}
+          showSourcesBelow={shouldShowSources(index)}
         />
       ))}
       {isStreaming && (

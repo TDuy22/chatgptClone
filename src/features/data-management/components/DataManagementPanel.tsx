@@ -153,10 +153,29 @@ export function DataManagement() {
                     value={selectedCollectionId}
                     onChange={handleSelectChange}
                     disabled={isLoadingCollections}
-                    style={{ width: '100%', padding: '8px', borderRadius: '8px', background: 'transparent' }}
+                    style={{ 
+                      width: '100%', 
+                      padding: '10px 12px', 
+                      borderRadius: '8px', 
+                      background: '#1a1a1a',
+                      color: '#e5e5e5',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                    }}
                   >
                     {collections.map((c) => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
+                      <option 
+                        key={c.id} 
+                        value={c.id}
+                        style={{ 
+                          background: '#1a1a1a', 
+                          color: '#e5e5e5',
+                          padding: '8px',
+                        }}
+                      >
+                        {c.name}
+                      </option>
                     ))}
                   </select>
                 </Box>

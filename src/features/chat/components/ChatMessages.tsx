@@ -122,6 +122,7 @@ export function ChatMessages() {
                           block={block}
                           sources={message.sources}
                           onCitationClick={handleCitationClick}
+                          showSourcesBelow={index === message.blocks!.length - 1}
                         />
                       ))
                     ) : (

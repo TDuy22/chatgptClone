@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import type { ContentBlock } from '@/services/demo-response-service';
 
 // Overload signatures
@@ -71,6 +71,48 @@ export function useStreamingText(input: string | ContentBlock[], speed: number =
   const intervalRef = useRef<number | null>(null);
   const currentBlockIndexRef = useRef(0);
   const currentWordIndexRef = useRef(0);
+  const inputRef = useRef<ContentBlock[]>([]); // Store input for visibility handler
+
+  // Track if this input has been fully displayed before
+  const completedInputsRef = useRef<Set<string>>(new Set());
+
+  // Create a simple hash for the input to track completion
+  const inputHash = useMemo(() => {
+    if (!input || input.length === 0) return '';
+    return input.map(b => b.body.substring(0, 50)).join('|');
+  }, [input]);
+
+  // Update inputRef when input changes
+  useEffect(() => {
+    inputRef.current = input as ContentBlock[];
+  }, [input]);
+
+  // Handle tab visibility change - complete streaming when tab becomes visible again
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && intervalRef.current !== null) {
+        // Tab is now visible and we were streaming - complete immediately
+        console.log('👁️ Tab became visible, completing streaming immediately');
+        
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+        
+        // Show all content immediately
+        if (inputRef.current && inputRef.current.length > 0) {
+          setDisplayedBlocks([...inputRef.current]);
+          setIsStreaming(false);
+          completedInputsRef.current.add(inputHash);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [inputHash]);
 
   useEffect(() => {
     if (!input || input.length === 0) {
@@ -79,9 +121,16 @@ export function useStreamingText(input: string | ContentBlock[], speed: number =
       return;
     }
 
+    // If this content was already fully displayed, show it immediately
+    if (completedInputsRef.current.has(inputHash)) {
+      console.log('⏩ Content already seen, showing immediately');
+      setDisplayedBlocks([...input]);
+      setIsStreaming(false);
+      return;
+    }
+
     console.log('🎬 Starting streaming for blocks:', input.length);
-    
-    // Reset state
+    // Reset state for new input
     setDisplayedBlocks([]);
     setIsStreaming(true);
     currentBlockIndexRef.current = 0;
@@ -98,6 +147,8 @@ export function useStreamingText(input: string | ContentBlock[], speed: number =
       if (blockIndex >= input.length) {
         console.log('✅ All blocks streamed!');
         setIsStreaming(false);
+        // Mark this content as completed so it shows immediately on re-mount
+        completedInputsRef.current.add(inputHash);
         if (intervalRef.current) {
           clearInterval(intervalRef.current);
           intervalRef.current = null;
@@ -145,7 +196,7 @@ export function useStreamingText(input: string | ContentBlock[], speed: number =
         intervalRef.current = null;
       }
     };
-  }, [input, speed]);
+  }, [input, inputHash, speed]);
 
   return { displayedBlocks, currentBlockIndex: currentBlockIndexRef.current, isStreaming };
 }
