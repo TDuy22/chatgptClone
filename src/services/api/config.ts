@@ -34,7 +34,8 @@ export const API_CONFIG = {
     INDEXING: '/indexing',
     
     // Collection endpoints
-    COLLECTIONS: '/collections',           // GET: list, POST: create
+    COLLECTIONS: '/get_collection_names',  // GET: lấy danh sách collections
+    CREATE_COLLECTION: '/create_collection', // POST: tạo collection mới
     COLLECTION_DELETE: '/collections',     // DELETE /collections/:name
     
     // Files endpoint - GET /collections_info?name={name}

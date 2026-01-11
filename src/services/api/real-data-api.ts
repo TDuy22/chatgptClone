@@ -73,22 +73,22 @@ export class RealDataApi implements DataApi {
   }
 
   /**
-   * POST /collections
-   * Body: { name: "collection_name" } hoặc FormData { name }
-   * Response: { id, name, createdAt }
+   * POST /create_collection?name={collection_name}
+   * Response: { status: "success" }
    */
   async createCollection(name: string): Promise<Collection> {
     try {
       console.log('📂 Creating collection:', name);
       
-      // Thử với JSON body trước
-      const response = await fetch(`${this.baseURL}${API_CONFIG.ENDPOINTS.COLLECTIONS}`, {
+      // Backend sử dụng query parameter: POST /create_collection?name=xxx
+      const url = `${this.baseURL}${API_CONFIG.ENDPOINTS.CREATE_COLLECTION}?name=${encodeURIComponent(name)}`;
+      console.log('📂 URL:', url);
+      
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({ name }),
       });
 
       if (!response.ok) {
@@ -98,13 +98,20 @@ export class RealDataApi implements DataApi {
       const data = await response.json();
       console.log('✅ Collection created:', data);
       
-      return {
+      // Backend trả về { status: "success" }
+      // Frontend tạo Collection object với thông tin cần thiết
+      const newCollection: Collection = {
         id: data.id || `col_${Date.now()}`,
         name: data.name || name,
         createdAt: data.createdAt || new Date().toISOString(),
       };
+      
+      // Lưu vào localStorage để sync
+      this.saveCollectionToLocalStorage(newCollection);
+      
+      return newCollection;
     } catch (error) {
-      console.warn('⚠️ Backend POST /collections not available, using localStorage fallback:', error);
+      console.warn('⚠️ Backend POST /create_collection not available, using localStorage fallback:', error);
       return this.createCollectionInLocalStorage(name);
     }
   }
@@ -285,6 +292,20 @@ export class RealDataApi implements DataApi {
     localStorage.setItem(this.COLLECTIONS_KEY, JSON.stringify(collections));
     
     return newCollection;
+  }
+
+  private saveCollectionToLocalStorage(collection: Collection): void {
+    const collections = this.getCollectionsFromLocalStorage();
+    
+    // Check if already exists
+    const existingIndex = collections.findIndex(c => c.name.toLowerCase() === collection.name.toLowerCase());
+    if (existingIndex >= 0) {
+      collections[existingIndex] = collection;
+    } else {
+      collections.push(collection);
+    }
+    
+    localStorage.setItem(this.COLLECTIONS_KEY, JSON.stringify(collections));
   }
 
   private getFilesFromLocalStorage(collectionId: string): FileItem[] {
