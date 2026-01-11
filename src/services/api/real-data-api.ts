@@ -110,8 +110,8 @@ export class RealDataApi implements DataApi {
   }
 
   /**
-   * GET /collections/:name/files
-   * Response: [{ id, name, size, type, uploadDate }]
+   * GET /collections_info?name={collection_name}
+   * Response: { files: [{ id, name, size, type, uploadDate }], ... } hoặc [{ name, ... }]
    */
   async getFiles(collectionId: string): Promise<FileItem[]> {
     try {
@@ -120,26 +120,41 @@ export class RealDataApi implements DataApi {
       const collection = collections.find(c => c.id === collectionId);
       const collectionName = collection?.name || collectionId;
 
-      console.log('📄 Fetching files for collection:', collectionName);
+      // Build URL with query parameter: /collections_info?name=collection_name
+      const url = `${this.baseURL}${API_CONFIG.ENDPOINTS.COLLECTION_INFO}?name=${encodeURIComponent(collectionName)}`;
       
-      const response = await fetch(
-        `${this.baseURL}${API_CONFIG.ENDPOINTS.COLLECTION_FILES}/${encodeURIComponent(collectionName)}/files`,
-        {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' },
-        }
-      );
+      console.log('📄 Fetching files for collection:', collectionName);
+      console.log('📄 URL:', url);
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('✅ Files from backend:', data);
+      console.log('✅ Collection info from backend:', data);
+      
+      // Backend có thể trả về:
+      // 1. { files: [...] } - Object với field files
+      // 2. [...] - Array trực tiếp
+      // 3. { documents: [...] } - Object với field documents
+      
+      let filesData: unknown[] = [];
+      
+      if (Array.isArray(data)) {
+        filesData = data;
+      } else if (data && typeof data === 'object') {
+        // Tìm field chứa danh sách files
+        filesData = data.files || data.documents || data.items || [];
+      }
       
       // Normalize response
-      if (Array.isArray(data)) {
-        return data.map((item: string | FileItem, index: number) => {
+      if (Array.isArray(filesData)) {
+        return filesData.map((item: unknown, index: number) => {
           if (typeof item === 'string') {
             return {
               id: `file_${index}`,
@@ -150,13 +165,14 @@ export class RealDataApi implements DataApi {
               collectionId,
             };
           }
-          return { ...item, collectionId };
+          const fileItem = item as FileItem;
+          return { ...fileItem, collectionId };
         });
       }
       
       return [];
     } catch (error) {
-      console.warn('⚠️ Backend /collections/:name/files not available, using localStorage fallback:', error);
+      console.warn('⚠️ Backend /collections_info not available, using localStorage fallback:', error);
       return this.getFilesFromLocalStorage(collectionId);
     }
   }

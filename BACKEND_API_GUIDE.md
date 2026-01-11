@@ -185,12 +185,31 @@ Content-Type: application/pdf
 
 **Response:** `application/json`
 
-Format đơn giản (chỉ tên):
+#### Response Schema:
+
+| Field | Type | Required | Mô tả |
+|-------|------|----------|-------|
+| `id` | string | ❌ Optional | ID unique của collection. Nếu không có, frontend sẽ tự generate |
+| `name` | string | ✅ **Required** | Tên collection (unique) |
+| `createdAt` | string (ISO 8601) | ❌ Optional | Thời gian tạo. Nếu không có, frontend dùng thời gian hiện tại |
+
+#### Các format được hỗ trợ:
+
+**Format 1: Array of strings (đơn giản nhất)**
 ```json
 ["tai-lieu-hoc-tap", "bao-cao-tai-chinh", "hop-dong"]
 ```
+→ Frontend sẽ tự convert thành objects với id và createdAt tự generate.
 
-Hoặc format đầy đủ:
+**Format 2: Array of objects (chỉ name)**
+```json
+[
+  { "name": "tai-lieu-hoc-tap" },
+  { "name": "bao-cao-tai-chinh" }
+]
+```
+
+**Format 3: Array of objects (đầy đủ) - KHUYẾN NGHỊ**
 ```json
 [
   {
@@ -206,26 +225,45 @@ Hoặc format đầy đủ:
 ]
 ```
 
-**Frontend sẽ tự normalize cả 2 format.**
+**Error Response:**
+```json
+{
+  "error": "Database connection failed",
+  "status": 500
+}
+```
 
 ---
 
 ### 4. POST `/collections` - Tạo collection mới
 
-**Mô tả:** Tạo một collection mới.
+**Mô tả:** Tạo một collection mới trong hệ thống.
 
 **Request:**
 - Content-Type: `application/json`
-- Body:
 
+#### Request Schema:
+
+| Field | Type | Required | Mô tả |
+|-------|------|----------|-------|
+| `name` | string | ✅ **Required** | Tên collection muốn tạo (nên unique) |
+
+**Request Body:**
 ```json
 {
   "name": "collection-moi"
 }
 ```
 
-**Response:** `application/json`
+#### Response Schema:
 
+| Field | Type | Required | Mô tả |
+|-------|------|----------|-------|
+| `id` | string | ❌ Optional | ID của collection vừa tạo |
+| `name` | string | ✅ **Required** | Tên collection |
+| `createdAt` | string (ISO 8601) | ❌ Optional | Thời gian tạo |
+
+**Success Response (201 Created):**
 ```json
 {
   "id": "col_123",
@@ -234,21 +272,70 @@ Hoặc format đầy đủ:
 }
 ```
 
+**Hoặc response tối thiểu:**
+```json
+{
+  "name": "collection-moi"
+}
+```
+
+**Error Response - Collection đã tồn tại (409 Conflict):**
+```json
+{
+  "error": "Collection 'collection-moi' already exists",
+  "status": 409
+}
+```
+
+**Error Response - Validation (400 Bad Request):**
+```json
+{
+  "error": "Collection name is required",
+  "status": 400
+}
+```
+
 ---
 
 ### 5. DELETE `/collections/:name` - Xóa collection
 
-**Mô tả:** Xóa một collection theo tên.
+**Mô tả:** Xóa một collection theo tên (bao gồm tất cả files trong đó).
 
-**Request:** 
-- URL param: `name` = tên collection cần xóa
+**Request:**
+- Method: `DELETE`
+- URL: `/collections/{collection_name}`
+- URL param: `name` = tên collection cần xóa (URL encoded nếu có ký tự đặc biệt)
 
-**Response:** `application/json`
+**Ví dụ:** `DELETE /collections/tai-lieu-hoc-tap`
 
+#### Response Schema:
+
+| Field | Type | Required | Mô tả |
+|-------|------|----------|-------|
+| `success` | boolean | ✅ **Required** | `true` nếu xóa thành công |
+| `message` | string | ❌ Optional | Thông báo chi tiết |
+
+**Success Response (200 OK):**
 ```json
 {
   "success": true,
-  "message": "Collection 'collection-moi' deleted"
+  "message": "Collection 'tai-lieu-hoc-tap' deleted successfully"
+}
+```
+
+**Hoặc response tối thiểu:**
+```json
+{
+  "success": true
+}
+```
+
+**Error Response - Không tìm thấy (404 Not Found):**
+```json
+{
+  "success": false,
+  "error": "Collection 'xyz' not found",
+  "status": 404
 }
 ```
 
@@ -256,19 +343,33 @@ Hoặc format đầy đủ:
 
 ### 6. GET `/collections/:name/files` - Lấy files trong collection
 
-**Mô tả:** Trả về danh sách files đã upload trong một collection.
+**Mô tả:** Trả về danh sách tất cả files đã upload trong một collection cụ thể.
 
 **Request:**
+- Method: `GET`  
+- URL: `/collections/{collection_name}/files`
 - URL param: `name` = tên collection
 
-**Response:** `application/json`
+**Ví dụ:** `GET /collections/tai-lieu-hoc-tap/files`
 
-Format đơn giản:
+#### Response Schema (mỗi file):
+
+| Field | Type | Required | Mô tả |
+|-------|------|----------|-------|
+| `id` | string | ❌ Optional | ID unique của file |
+| `name` | string | ✅ **Required** | Tên file (ví dụ: "document.pdf") |
+| `size` | number | ❌ Optional | Kích thước file (bytes) |
+| `type` | string | ❌ Optional | MIME type (ví dụ: "application/pdf") |
+| `uploadDate` | string (ISO 8601) | ❌ Optional | Thời gian upload |
+
+#### Các format được hỗ trợ:
+
+**Format 1: Array of strings (đơn giản nhất)**
 ```json
 ["document.pdf", "report.docx", "data.xlsx"]
 ```
 
-Hoặc format đầy đủ:
+**Format 2: Array of objects (đầy đủ) - KHUYẾN NGHỊ**
 ```json
 [
   {
@@ -287,6 +388,39 @@ Hoặc format đầy đủ:
   }
 ]
 ```
+
+**Empty collection:**
+```json
+[]
+```
+
+**Error Response - Collection không tồn tại (404):**
+```json
+{
+  "error": "Collection 'xyz' not found",
+  "status": 404
+}
+```
+
+---
+
+## Tóm tắt Required/Optional Fields
+
+### Collection Object:
+| Field | Required | Mô tả |
+|-------|----------|-------|
+| `name` | ✅ **BẮT BUỘC** | Tên collection, dùng làm identifier chính |
+| `id` | ❌ Optional | Frontend tự generate nếu không có |
+| `createdAt` | ❌ Optional | Frontend dùng `new Date().toISOString()` nếu không có |
+
+### File Object:
+| Field | Required | Mô tả |
+|-------|----------|-------|
+| `name` | ✅ **BẮT BUỘC** | Tên file |
+| `id` | ❌ Optional | Frontend tự generate nếu không có |
+| `size` | ❌ Optional | Hiển thị "Unknown" nếu không có |
+| `type` | ❌ Optional | Default: "application/octet-stream" |
+| `uploadDate` | ❌ Optional | Frontend dùng thời gian hiện tại nếu không có |
 
 ---
 

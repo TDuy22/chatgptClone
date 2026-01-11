@@ -19,7 +19,7 @@
  *    DELETE /collections/:name  - Xóa collection
  * 
  * 4. FILES (Quản lý files trong collection):
- *    GET /collections/:name/files - Lấy danh sách files
+ *    GET /collections_info?name={name} - Lấy thông tin collection và files
  */
 
 export const API_CONFIG = {
@@ -37,8 +37,8 @@ export const API_CONFIG = {
     COLLECTIONS: '/collections',           // GET: list, POST: create
     COLLECTION_DELETE: '/collections',     // DELETE /collections/:name
     
-    // Files endpoint
-    COLLECTION_FILES: '/collections',      // GET /collections/:name/files
+    // Files endpoint - GET /collections_info?name={name}
+    COLLECTION_INFO: '/collections_info',
   },
   
   // Timeout cho requests (ms)
