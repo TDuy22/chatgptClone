@@ -10,6 +10,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 import {
   LuDatabase,
   LuShieldCheck,
@@ -24,11 +25,13 @@ import {
   LuPlay,
 } from 'react-icons/lu';
 
-interface LandingPageProps {
-  onEnterApp: () => void;
-}
+export function LandingPage() {
+  const navigate = useNavigate();
 
-export function LandingPage({ onEnterApp }: LandingPageProps) {
+  const handleEnterApp = () => {
+    navigate('/app');
+  };
+
   return (
     <Box bg='gray.950' minH='100vh' color='white' overflowX='hidden'>
       {/* Navbar */}
@@ -97,7 +100,7 @@ export function LandingPage({ onEnterApp }: LandingPageProps) {
                   boxShadow: '0 10px 40px rgba(14, 165, 233, 0.4)',
                 }}
                 transition='all 0.3s'
-                onClick={onEnterApp}
+                onClick={handleEnterApp}
               >
                 Đăng nhập
               </Button>
@@ -214,7 +217,7 @@ export function LandingPage({ onEnterApp }: LandingPageProps) {
                   boxShadow: '0 20px 60px rgba(14, 165, 233, 0.4)',
                 }}
                 transition='all 0.3s'
-                onClick={onEnterApp}
+                onClick={handleEnterApp}
               >
                 <HStack>
                   <Text>Bắt đầu miễn phí</Text>
@@ -554,7 +557,7 @@ export function LandingPage({ onEnterApp }: LandingPageProps) {
                     boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
                   }}
                   transition='all 0.3s'
-                  onClick={onEnterApp}
+                  onClick={handleEnterApp}
                 >
                   <HStack>
                     <Text>Bắt đầu ngay</Text>
