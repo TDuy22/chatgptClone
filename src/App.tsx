@@ -4,7 +4,7 @@ import { AppProvider, useAppContext } from '@/contexts/AppContext';
 import { ChatView } from '@/features/chat';
 import { DataManagement } from '@/features/data-management/components/DataManagementPanel';
 import { Sidebar, SidebarProvider } from '@/features/sidebar';
-import { LandingPage } from '@/pages';
+import { LandingPage, LoginPage, RegisterPage } from '@/pages';
 
 function AppContent() {
   const { currentView } = useAppContext();
@@ -46,6 +46,10 @@ function App() {
         {/* Landing Page */}
         <Route path='/' element={<LandingPage />} />
         <Route path='/landing' element={<LandingPage />} />
+        
+        {/* Auth Pages */}
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/register' element={<RegisterPage />} />
         
         {/* Main App */}
         <Route path='/app' element={<MainApp />} />

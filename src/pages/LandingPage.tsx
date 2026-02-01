@@ -29,8 +29,12 @@ import {
 export function LandingPage() {
   const navigate = useNavigate();
 
-  const handleEnterApp = () => {
-    navigate('/app');
+  const handleLogin = () => {
+    navigate('/login');
+  };
+
+  const handleRegister = () => {
+    navigate('/register');
   };
 
   return (
@@ -91,7 +95,7 @@ export function LandingPage() {
                   boxShadow: '0 10px 40px rgba(14, 165, 233, 0.4)',
                 }}
                 transition='all 0.3s'
-                onClick={handleEnterApp}
+                onClick={handleLogin}
               >
                 Đăng nhập
               </Button>
@@ -208,7 +212,7 @@ export function LandingPage() {
                   boxShadow: '0 20px 60px rgba(14, 165, 233, 0.4)',
                 }}
                 transition='all 0.3s'
-                onClick={handleEnterApp}
+                onClick={handleRegister}
               >
                 <HStack>
                   <Text>Bắt đầu miễn phí</Text>
@@ -548,7 +552,7 @@ export function LandingPage() {
                     boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
                   }}
                   transition='all 0.3s'
-                  onClick={handleEnterApp}
+                  onClick={handleRegister}
                 >
                   <HStack>
                     <Text>Bắt đầu ngay</Text>
