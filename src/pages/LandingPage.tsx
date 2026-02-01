@@ -6,6 +6,7 @@ import {
   Heading,
   HStack,
   Icon,
+  Image,
   SimpleGrid,
   Text,
   VStack,
@@ -49,22 +50,12 @@ export function LandingPage() {
         <Container maxW='container.xl' py='4'>
           <HStack justify='space-between'>
             <HStack gap='3'>
-              <Box
-                w='40px'
+              <Image
+                src='/askify-logo-full.png'
+                alt='Askify Logo'
                 h='40px'
-                bg='linear-gradient(135deg, #0ea5e9, #8b5cf6)'
-                borderRadius='lg'
-                display='flex'
-                alignItems='center'
-                justifyContent='center'
-              >
-                <Text fontWeight='bold' fontSize='xl' color='white'>
-                  A
-                </Text>
-              </Box>
-              <Heading size='lg' bgGradient='to-r' gradientFrom='blue.400' gradientTo='purple.400' bgClip='text'>
-                Askify
-              </Heading>
+                objectFit='contain'
+              />
             </HStack>
             <HStack gap='4'>
               <Button
@@ -594,19 +585,12 @@ export function LandingPage() {
             gap='6'
           >
             <HStack gap='3'>
-              <Box
-                w='32px'
+              <Image
+                src='/askify-logo.png'
+                alt='Askify Logo'
                 h='32px'
-                bg='linear-gradient(135deg, #0ea5e9, #8b5cf6)'
-                borderRadius='lg'
-                display='flex'
-                alignItems='center'
-                justifyContent='center'
-              >
-                <Text fontWeight='bold' fontSize='sm' color='white'>
-                  A
-                </Text>
-              </Box>
+                objectFit='contain'
+              />
               <Text fontWeight='semibold' color='white'>
                 Askify
               </Text>

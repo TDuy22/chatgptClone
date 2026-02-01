@@ -6,7 +6,7 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from '@/components/ui/menu';
-import { Box, Circle, HStack, Stack, Text } from '@chakra-ui/react';
+import { Box, Circle, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import {
   ChatGPTMenuIcon,
   ChatGPTPlusIcon,
@@ -51,7 +51,11 @@ export const ChatGPTMenu = () => {
           fontWeight='blightbold'
           color='fg.muted'
         >
-          Askify <MenuIcon />
+          <HStack gap='2'>
+            <Image src='/askify-logo.png' alt='Askify' h='24px' />
+            <Text>Askify</Text>
+            <MenuIcon />
+          </HStack>
         </Button>
       </MenuTrigger>
       <MenuContent minW='320px' borderRadius='2xl'>
