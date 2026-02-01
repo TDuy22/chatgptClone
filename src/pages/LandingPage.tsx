@@ -37,6 +37,10 @@ export function LandingPage() {
     navigate('/register');
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <Box bg='gray.950' minH='100vh' color='white' overflowX='hidden'>
       {/* Navbar */}
@@ -67,6 +71,7 @@ export function LandingPage() {
                 color='gray.300'
                 _hover={{ color: 'white', bg: 'rgba(255,255,255,0.1)' }}
                 display={{ base: 'none', md: 'flex' }}
+                onClick={scrollToTop}
               >
                 Tính năng
               </Button>
@@ -75,6 +80,7 @@ export function LandingPage() {
                 color='gray.300'
                 _hover={{ color: 'white', bg: 'rgba(255,255,255,0.1)' }}
                 display={{ base: 'none', md: 'flex' }}
+                onClick={scrollToTop}
               >
                 Giải pháp
               </Button>
@@ -83,6 +89,7 @@ export function LandingPage() {
                 color='gray.300'
                 _hover={{ color: 'white', bg: 'rgba(255,255,255,0.1)' }}
                 display={{ base: 'none', md: 'flex' }}
+                onClick={scrollToTop}
               >
                 Bảng giá
               </Button>
@@ -231,6 +238,7 @@ export function LandingPage() {
                   bg: 'rgba(255,255,255,0.1)',
                   borderColor: 'rgba(255,255,255,0.3)',
                 }}
+                display='none'
               >
                 <HStack>
                   <LuPlay />
@@ -605,6 +613,7 @@ export function LandingPage() {
                 cursor='pointer'
                 _hover={{ color: 'white' }}
                 transition='color 0.2s'
+                onClick={() => window.open('https://www.facebook.com/profile.php?id=61586679794462', '_blank')}
               >
                 Về chúng tôi
               </Text>
@@ -612,6 +621,7 @@ export function LandingPage() {
                 cursor='pointer'
                 _hover={{ color: 'white' }}
                 transition='color 0.2s'
+                onClick={scrollToTop}
               >
                 Chính sách bảo mật
               </Text>
@@ -619,6 +629,7 @@ export function LandingPage() {
                 cursor='pointer'
                 _hover={{ color: 'white' }}
                 transition='color 0.2s'
+                onClick={scrollToTop}
               >
                 Điều khoản sử dụng
               </Text>
@@ -626,6 +637,7 @@ export function LandingPage() {
                 cursor='pointer'
                 _hover={{ color: 'white' }}
                 transition='color 0.2s'
+                onClick={() => window.open('https://www.facebook.com/profile.php?id=61586679794462', '_blank')}
               >
                 Liên hệ
               </Text>
