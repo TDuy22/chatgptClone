@@ -33,13 +33,16 @@ export function LoginPage() {
 
     setIsLoading(true);
     
-    // Simulate login (replace with actual API call later)
+    // Hardcoded login check for admin
     setTimeout(() => {
-      // For now, just redirect to app
-      // In the future, this will call the backend API
-      localStorage.setItem('askify_user', JSON.stringify({ email }));
-      setIsLoading(false);
-      navigate('/app');
+      if (email === 'admin@gmail.com' && password === 'admin') {
+        localStorage.setItem('askify_user', JSON.stringify({ email }));
+        setIsLoading(false);
+        navigate('/app');
+      } else {
+        setError('Tài khoản hoặc mật khẩu không đúng');
+        setIsLoading(false);
+      }
     }, 1000);
   };
 
@@ -133,7 +136,7 @@ export function LoginPage() {
               {/* Email Input */}
               <VStack w='full' align='start' gap='2'>
                 <Text color='gray.300' fontSize='sm' fontWeight='medium'>
-                  Email
+                  Email / Tên đăng nhập
                 </Text>
                 <Box position='relative' w='full'>
                   <Box
@@ -146,8 +149,8 @@ export function LoginPage() {
                     <LuMail />
                   </Box>
                   <Input
-                    type='email'
-                    placeholder='name@company.com'
+                    type='text'
+                    placeholder='admin'
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     pl='12'
