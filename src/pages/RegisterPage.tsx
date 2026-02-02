@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Container,
   Heading,
   HStack,
@@ -9,6 +8,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { LuEye, LuEyeOff, LuMail, LuLock, LuUser, LuCheck } from 'react-icons/lu';
