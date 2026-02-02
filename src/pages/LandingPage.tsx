@@ -5,7 +5,6 @@ import {
   Flex,
   Heading,
   HStack,
-  Icon,
   Image,
   SimpleGrid,
   Text,
@@ -689,7 +688,7 @@ function FeatureCard({
           align='center'
           justify='center'
         >
-          <Icon as={IconComponent} boxSize='6' color={color} />
+          <Box as={IconComponent} boxSize='6' color={color} />
         </Flex>
         <Heading size='md' color='white'>
           {title}
@@ -745,7 +744,7 @@ function StepCard({
         align='center'
         justify='center'
       >
-        <Icon as={IconComponent} boxSize='8' color='blue.400' />
+        <Box as={IconComponent} boxSize='8' color='blue.400' />
       </Flex>
       <Heading size='md' color='white'>
         {title}
@@ -778,7 +777,7 @@ function BenefitItem({
         justify='center'
         flexShrink={0}
       >
-        <Icon as={IconComponent} boxSize='5' color='green.400' />
+        <Box as={IconComponent} boxSize='5' color='green.400' />
       </Flex>
       <VStack align='start' gap='1'>
         <Text fontWeight='semibold' color='white'>
