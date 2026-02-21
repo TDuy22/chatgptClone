@@ -19,7 +19,7 @@ export const ScrollAnimation = ({
   stagger = false,
   staggerIndex = 0,
   threshold = 0.1,
-  triggerOnce = true,
+  triggerOnce = false,
 }: ScrollAnimationProps) => {
   const { elementRef, isVisible } = useScrollAnimation({
     threshold: threshold ?? 0.15,
